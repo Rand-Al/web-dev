@@ -1,8 +1,9 @@
+import Layout from "./Layout";
 const SignUp = () => {
   return (
-    <div>
+    <Layout>
       <div></div>
-    </div>
+    </Layout>
   );
 };
 
