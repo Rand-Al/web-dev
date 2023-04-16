@@ -1,5 +1,11 @@
+import Layout from "./Layout";
+
 const Admin = () => {
-  return <div></div>;
+  return (
+    <Layout>
+      <div></div>
+    </Layout>
+  );
 };
 
 export default Admin;

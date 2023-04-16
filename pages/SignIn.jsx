@@ -1,7 +1,7 @@
+import Layout from "./Layout";
+
 const SignIn = () => {
-  return <div>
-    
-  </div>;
+  return <Layout></Layout>;
 };
 
 export default SignIn;

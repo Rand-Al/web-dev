@@ -19,6 +19,50 @@ if (!data.users) {
     },
   ];
 }
+if (!data.courses) {
+  data.courses = [
+    {
+      id: 1,
+      title: "JavaScript",
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+      category: ["Front end", "Back End"],
+      tag: ["#JavaScript", "#BackEnd"],
+      image:
+        "https://placehold.jp/30/db3131/ffffff/300x150.png?text=placeholder+image",
+    },
+    {
+      id: 2,
+      title: "Python",
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+      category: ["Front end", "Back End"],
+      tag: ["#JavaScript", "#BackEnd"],
+      image:
+        "https://placehold.jp/30/dd6699/ffffff/300x150.png?text=placeholder+image",
+    },
+    {
+      id: 3,
+      title: "Ruby",
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+      category: ["Front end", "Back End"],
+      tag: ["#JavaScript", "#BackEnd"],
+      image:
+        "https://placehold.jp/30/d5d807/ffffff/300x150.png?text=placeholder+image",
+    },
+    {
+      id: 4,
+      title: "C#",
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+      category: ["Front end", "Back End"],
+      tag: ["#JavaScript", "#BackEnd"],
+      image:
+        "https://placehold.jp/30/1505e9/ffffff/300x150.png?text=placeholder+image",
+    },
+  ];
+}
 if (!data.comments) {
   data.comments = [];
 }
@@ -27,6 +71,9 @@ if (!data.userIdKey) {
 }
 if (!data.commentIdKey) {
   data.commentIdKey = 1;
+}
+if (!data.courseIdKey) {
+  data.courseIdKey = 2;
 }
 fs.writeFileSync(filename, JSON.stringify(data));
 
@@ -78,6 +125,16 @@ const db = {
     course.comments.push(comment);
 
     fs.writeFileSync(filename, JSON.stringify(data));
+  },
+  addCourse(course) {
+    const data = JSON.parse(fs.readFileSync(filename));
+    const newCourse = { ...course };
+    newCourse.id = course.courseIdKey++;
+    data.courses.push(newCourse);
+  },
+  getCourses() {
+    const data = fs.readFileSync(filename);
+    return JSON.parse(data).courses;
   },
 };
 
