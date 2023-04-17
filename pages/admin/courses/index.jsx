@@ -6,21 +6,6 @@ import Link from "next/link";
 
 const Courses = ({ coursesList }) => {
   const [courses, setCourses] = useState(coursesList);
-  console.log(courses);
-  const changeStatus = (id) => {
-    axios.put("/api/courses", [{ id: id }]).then((res) => console.log(res));
-    setCourses((prev) => {
-      const user = prev.find((user) => user.id === id);
-      user.isApproved = true;
-      return [...prev];
-    });
-  };
-  const deleteUser = (id) => {
-    axios
-      .delete(`/api/users/${id}`, { data: id })
-      .then((res) => console.log(res));
-    setCourses((prev) => prev.filter((user) => user.id !== id));
-  };
   return (
     <div className="table-responsive flex-grow-1 p-3">
       <h2 className="d-flex justify-content-between">
