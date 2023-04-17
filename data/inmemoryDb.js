@@ -10,12 +10,45 @@ if (!data.users) {
       id: 1,
       email: "admin@web-developer.com",
       password: "123456",
-      firstName: "Admin",
-      lastName: "Admin",
-      phone: "+380555443322",
+      firstName: "user1",
+      lastName: "user1",
+      phone: "+000000000",
       age: 18,
       role: "admin",
       isApproved: true,
+    },
+    {
+      id: 2,
+      email: "user1@gmail.com",
+      password: "123456",
+      firstName: "user2",
+      lastName: "user2",
+      phone: "+0000000000",
+      age: 18,
+      role: "user",
+      isApproved: false,
+    },
+    {
+      id: 3,
+      email: "user2@gmail.com",
+      password: "123456",
+      firstName: "user3",
+      lastName: "user3",
+      phone: "+9999999999",
+      age: 18,
+      role: "user",
+      isApproved: false,
+    },
+    {
+      id: 4,
+      email: "user3@gmail.com",
+      password: "123456",
+      firstName: "user4",
+      lastName: "user4",
+      phone: "+555555555",
+      age: 18,
+      role: "user",
+      isApproved: false,
     },
   ];
 }
@@ -63,11 +96,21 @@ if (!data.courses) {
     },
   ];
 }
+if (!data.categories) {
+  data.categories = [
+    "Front end",
+    "Back End",
+    "Server software",
+    "Application software",
+    "System software",
+  ];
+}
+
 if (!data.comments) {
   data.comments = [];
 }
 if (!data.userIdKey) {
-  data.userId = 2;
+  data.userId = 5;
 }
 if (!data.commentIdKey) {
   data.commentIdKey = 1;
@@ -105,11 +148,19 @@ const db = {
 
   deny(userId) {
     const data = JSON.parse(fs.readFileSync(filename));
-    data.users = data.users.find((user) => user.id !== userId);
+    data.users = data.users.filter((user) => userId !== user.id);
 
     fs.writeFileSync(filename, JSON.stringify(data));
   },
-
+  getCategories() {
+    const data = fs.readFileSync(filename);
+    return JSON.parse(data).categories;
+  },
+  addCategory(category) {
+    const data = JSON.parse(fs.readFileSync(filename));
+    data.categories.push(category);
+    fs.writeFileSync(filename, JSON.stringify(data));
+  },
   addComment(comment, userId, courseId) {
     const data = JSON.parse(fs.readFileSync(filename));
     comment.id = data.commentIdKey++;

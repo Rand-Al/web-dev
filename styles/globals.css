@@ -45,3 +45,10 @@ a.active {
 .radius-img {
   border-radius: 20px !important;
 }
+.textarea {
+  height: 200px !important;
+}
+.border {
+  border: 1px solid #dee2e6;
+  border-radius: 3px;
+}

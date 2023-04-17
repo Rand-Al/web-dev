@@ -1,11 +1,8 @@
-import Layout from "./Layout";
+import AdminLayout from "@/layout/AdminLayout";
 
-const Admin = () => {
-  return (
-    <Layout>
-      <div></div>
-    </Layout>
-  );
+const Admin = ({ children }) => {
+  return <div className="d-flex">{children}</div>;
 };
 
 export default Admin;
+Admin.Layout = AdminLayout;
