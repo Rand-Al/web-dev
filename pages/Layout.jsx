@@ -1,9 +1,8 @@
 import Head from "next/head";
-import Link from "next/link";
-import { useRouter } from "next/router";
 
-const Layout = ({ children }) => {
-  const router = useRouter();
+import Header from "@/components/Header";
+
+const Layout = ({ children, user }) => {
   return (
     <>
       <Head>
@@ -13,103 +12,7 @@ const Layout = ({ children }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <section className="d-flex flex-column h-100vh">
-        <header className="p-3 bg-dark text-white fw-bold">
-          <div className="container">
-            <nav className="navbar navbar-expand-lg navbar-light radius bg-light">
-              <div className="container-fluid">
-                <Link className="navbar-brand" href={`/`}>
-                  WebDev
-                </Link>
-                <button
-                  className="navbar-toggler"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#navbarSupportedContent"
-                  aria-controls="navbarSupportedContent"
-                  aria-expanded="false"
-                  aria-label="Toggle navigation"
-                >
-                  <span className="navbar-toggler-icon"></span>
-                </button>
-                <div
-                  className="collapse navbar-collapse"
-                  id="navbarSupportedContent"
-                >
-                  <div className="flex-auto">
-                    <form className="d-flex">
-                      <input
-                        className="form-control me-2 width-auto"
-                        type="search"
-                        placeholder="Search"
-                        aria-label="Search"
-                      />
-                      <button className="btn btn-primary s" type="submit">
-                        Search
-                      </button>
-                    </form>
-                  </div>
-                  <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li className="nav-item">
-                      <Link
-                        className={`nav-link ${
-                          router.pathname === "/" && "active"
-                        }`}
-                        aria-current="page"
-                        href={`/`}
-                      >
-                        Home
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link
-                        className={`nav-link ${
-                          router.pathname === "/admin" ||
-                          router.pathname === "/admin/users" ||
-                          router.pathname === "/admin/courses"
-                            ? "active"
-                            : ""
-                        }`}
-                        href={`/admin/users`}
-                      >
-                        Admin
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <a
-                        className={`nav-link ${
-                          router.pathname === "/" && "about"
-                        }`}
-                        href="#"
-                      >
-                        About
-                      </a>
-                    </li>
-                    <li className="nav-item">
-                      <a
-                        className={`nav-link ${
-                          router.pathname === "/" && "signin"
-                        }`}
-                        href="#"
-                      >
-                        Sign In
-                      </a>
-                    </li>
-                    <li className="nav-item">
-                      <Link
-                        className={`nav-link ${
-                          router.pathname === "/" && "signup"
-                        }`}
-                        href={`/signup`}
-                      >
-                        Sign Up
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </nav>
-          </div>
-        </header>
+        <Header user={user} />
         <main className="flex-auto">{children}</main>
         <footer className="footer py-3 bg-dark text-white">
           <div className="container fw-bold d-flex justify-content-between">

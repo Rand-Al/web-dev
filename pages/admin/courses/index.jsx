@@ -28,7 +28,7 @@ const Courses = ({ coursesList }) => {
         <tbody>
           {courses.map((course) => {
             return (
-              <tr key={course.id}>
+              <tr key={Math.random()}>
                 <td>{course.id}</td>
                 <td>{course.title}</td>
                 <td>{course.description}</td>
@@ -68,7 +68,6 @@ Courses.Layout = AdminLayout;
 export async function getStaticProps() {
   const res = await axios.get(`http://localhost:3000/api/courses`);
   const coursesList = res.data;
-  console.log(res.data);
   return {
     props: {
       coursesList,
