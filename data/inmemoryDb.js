@@ -182,10 +182,17 @@ const db = {
     const newCourse = { ...course };
     newCourse.id = course.courseIdKey++;
     data.courses.push(newCourse);
+    fs.writeFileSync(filename, JSON.stringify(data));
   },
   getCourses() {
     const data = fs.readFileSync(filename);
     return JSON.parse(data).courses;
+  },
+  editCourse(course) {
+    const data = JSON.parse(fs.readFileSync(filename));
+    const indexOfCourse = data.courses.indexOf(course);
+    console.log(indexOfCourse);
+    fs.writeFileSync(filename, JSON.stringify(data));
   },
 };
 

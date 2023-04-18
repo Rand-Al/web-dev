@@ -5,6 +5,8 @@ import axios from "axios";
 const CourseEdit = ({ coursesList, categoriesList }) => {
   const router = useRouter();
   const courseId = Number(router.query.id);
+  const [image, setImage] = useState(null);
+  const [createObjectURL, setCreateObjectURL] = useState(null);
   const oneCourse = coursesList.filter((course) => courseId === course.id);
   const [course, setCourse] = useState(oneCourse[0]);
   const [tagValue, setTagValue] = useState(course.tag.join(", "));
@@ -41,12 +43,32 @@ const CourseEdit = ({ coursesList, categoriesList }) => {
     newCourse.tag = tags;
     setCourse(newCourse);
   };
-  console.log(course.tag);
+  const uploadImageToState = (event) => {
+    if (event.target.files[0]) {
+      const i = event.target.files[0];
+      setImage(i);
+      setCreateObjectURL(URL.createObjectURL(i));
+      console.log(URL.createObjectURL(i));
+    }
+  };
+
+  const uploadToServer = async (e) => {
+    e.preventDefault();
+    const body = new FormData();
+    body.append("file", image);
+    const response = await axios.post("/api/upload", body);
+    console.log(response);
+  };
+  const handleChanges = () => {
+    axios.put("/api/courses", course).then((res) => console.log(res));
+  };
+
   return (
     <div className="container">
       <form>
-        <h1 className="h3 mb-3 fw-normal">
-          <span>Edit course:</span> <span>{course.title}</span>
+        <h1 className="h3 mb-3 fw-normal text-center mt-4 fw-bold">
+          <span>Edit course:</span>{" "}
+          <span className="underline">{course.title}</span>
         </h1>
         <div className="form-floating mb-3">
           <input
@@ -129,7 +151,23 @@ const CourseEdit = ({ coursesList, categoriesList }) => {
           />
           <label htmlFor="floatingInput">Tags</label>
         </div>
-        <button className="w-100 btn btn-lg btn-primary" type="submit">
+        <div>
+          <img src={createObjectURL} />
+          <h4>Select Image</h4>
+          <input type="file" name="myImage" onChange={uploadImageToState} />
+          <button
+            className="btn btn-primary"
+            type="submit"
+            onClick={(e) => uploadToServer(e)}
+          >
+            Send to server
+          </button>
+        </div>
+        <button
+          onClick={() => handleChanges()}
+          className="w-100 btn btn-lg btn-primary"
+          type="submit"
+        >
           Sign in
         </button>
       </form>
