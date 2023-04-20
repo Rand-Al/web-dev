@@ -1,8 +1,6 @@
-import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-
-const AdminLayout = ({ children, user }) => {
+const AdminLayout = ({ children }) => {
   const router = useRouter();
   return (
     <div className="container-fluid d-flex">

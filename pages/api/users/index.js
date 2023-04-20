@@ -6,7 +6,12 @@ export default function handler(req, res) {
     return res.status(200).json(inmemoryDb.getUsers());
   }
   if (req.method === "PUT") {
-    inmemoryDb.approve(req.body[0].id);
+    if (req.body[0]?.is === false) {
+      inmemoryDb.approve(req.body[0].id);
+      return res.status(200).end();
+    }
+    const user = req.body;
+    inmemoryDb.editUser(user);
     return res.status(200).end();
   }
 }

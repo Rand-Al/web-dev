@@ -2,12 +2,9 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import axios from "axios";
-import { withIronSessionSsr } from "iron-session/next";
-import { sessionOptions } from "../lib/session";
 
-export default function Header({ user }) {
+export default function Header({ user, title, courseTitle }) {
   const router = useRouter();
-  console.log(user);
   const handleLogout = async (e) => {
     e.preventDefault();
     const response = await axios.post("/api/logout");
@@ -35,67 +32,89 @@ export default function Header({ user }) {
               <span className="navbar-toggler-icon"></span>
             </button>
             <div
-              className="collapse navbar-collapse"
+              className={`collapse navbar-collapse justify-content-end`}
               id="navbarSupportedContent"
             >
-              <div className="flex-auto">
-                <form className="d-flex">
-                  <input
-                    className="form-control me-2 width-auto"
-                    type="search"
-                    placeholder="Search"
-                    aria-label="Search"
-                  />
-                  <button className="btn btn-primary s" type="submit">
-                    Search
-                  </button>
-                </form>
-              </div>
-              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                <li className="nav-item">
-                  <Link
-                    className={`nav-link ${
-                      router.pathname === "/" && "active"
-                    }`}
-                    aria-current="page"
-                    href={`/`}
-                  >
-                    Home
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link
-                    className={`nav-link ${
-                      router.pathname === "/" && "profile"
-                    }`}
-                    aria-current="page"
-                    href={`/profile`}
-                  >
-                    Profile
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link
-                    className={`nav-link ${
-                      router.pathname === "/admin" ||
-                      router.pathname === "/admin/users" ||
-                      router.pathname === "/admin/courses"
-                        ? "active"
-                        : ""
-                    }`}
-                    href={`/admin/users`}
-                  >
-                    Admin
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <button
-                    className={`nav-link`}
-                    onClick={(e) => handleLogout(e)}
-                  >
-                    Logout
-                  </button>
-                </li>
+              {title !== courseTitle &&
+              user &&
+              router.pathname !== "/profile" ? (
+                <div className="flex-auto">
+                  <form className="d-flex">
+                    <input
+                      className="form-control me-2 width-auto"
+                      type="search"
+                      placeholder="Search"
+                      aria-label="Search"
+                    />
+                    <button className="btn btn-primary s" type="submit">
+                      Search
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                <></>
+              )}
+
+              <ul
+                className={`navbar-nav ${
+                  user &&
+                  router.pathname !== "/profile" &&
+                  `me-auto` &&
+                  title !== courseTitle
+                } mb-2 mb-lg-0 flex-grow-0`}
+              >
+                {user !== undefined && (
+                  <>
+                    {" "}
+                    <li className="nav-item">
+                      <Link
+                        className={`nav-link ${
+                          router.pathname === "/" && "active"
+                        }`}
+                        aria-current="page"
+                        href={`/`}
+                      >
+                        Home
+                      </Link>
+                    </li>
+                    <li className="nav-item">
+                      <Link
+                        className={`nav-link ${
+                          router.pathname === "/profile" && "active"
+                        }`}
+                        aria-current="page"
+                        href={`/profile`}
+                      >
+                        Profile
+                      </Link>
+                    </li>
+                    {user.role === "admin" && (
+                      <li className="nav-item">
+                        <Link
+                          className={`nav-link ${
+                            router.pathname === "/admin" ||
+                            router.pathname === "/admin/users" ||
+                            router.pathname === "/admin/courses"
+                              ? "active"
+                              : ""
+                          }`}
+                          href={`/admin/users`}
+                        >
+                          Admin
+                        </Link>
+                      </li>
+                    )}
+                    <li className="nav-item">
+                      <button
+                        className={`nav-link`}
+                        onClick={(e) => handleLogout(e)}
+                      >
+                        Log out
+                      </button>
+                    </li>
+                  </>
+                )}
+
                 {!user && (
                   <>
                     <li className="nav-item">
@@ -128,18 +147,3 @@ export default function Header({ user }) {
     </header>
   );
 }
-
-export const getServerSideProps = withIronSessionSsr(async function ({
-  req,
-  res,
-}) {
-  const user = req.session.user;
-  if (user === undefined) {
-    return {};
-  }
-
-  return {
-    props: { user: req.session.user },
-  };
-},
-sessionOptions);

@@ -1,0 +1,18 @@
+.bgBorder {
+  background-color: #eee;
+  border-radius: 0.5rem;
+}
+.imgWidth {
+  width: 150px;
+}
+.flexBasis {
+  max-width: 30%;
+}
+.fontXXl {
+  font-size: 22px;
+  font-weight: 500;
+}
+.fontXl {
+  font-size: 18px;
+  font-weight: 400;
+}

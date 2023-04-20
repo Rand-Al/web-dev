@@ -1,10 +1,17 @@
 import Link from "next/link";
 import React from "react";
+import Image from "next/image";
 
 const Card = ({ course }) => {
   return (
     <div className="card card-width">
-      <img src={course.image} className="card-img-top radius" alt="..." />
+      <img
+        src={course.image}
+        className="card-img-top radius"
+        width={340}
+        height={150}
+        alt="..."
+      />
       <div className="card-body">
         <h5 className="card-title">{course.title}</h5>
         <p className="card-text overflow">{course.description}</p>
@@ -17,9 +24,3 @@ const Card = ({ course }) => {
 };
 
 export default Card;
-
-export async function getServerSideProps() {
-  const res = await axios.get(`http://127.0.0.1:3000/api/courses`);
-  const coursesList = res.data;
-  return { props: { coursesList } };
-}

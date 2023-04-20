@@ -1,13 +1,27 @@
 import { withIronSessionApiRoute } from "iron-session/next";
 import { sessionOptions } from "../../lib/session";
+import inmemoryDb from "@/data/inmemoryDb";
 
 async function loginRoute(req, res) {
   const user = await req.body;
-
-  if (!user || user.email !== "admin@gmail.com" || user.password !== "123456") {
+  const dbUser = inmemoryDb
+    .getUsers()
+    .find((dbUser) => dbUser.email === user.email);
+  if (
+    !user ||
+    user.email !== dbUser.email ||
+    user.password !== dbUser.password
+  ) {
     res.status(401).end();
   }
-  const sessionUser = { isLoggedIn: true, login: user.email };
+  if (dbUser.isApproved === false) {
+    res.status(403).json("Your account is not approved!");
+  }
+  const sessionUser = {
+    isLoggedIn: true,
+    login: user.email,
+    role: dbUser.role,
+  };
   req.session.user = sessionUser;
 
   await req.session.save();

@@ -2,6 +2,7 @@ import s from "../styles/Login.module.css";
 import { useState } from "react";
 import axios from "axios";
 import Layout from "./Layout";
+import Link from "next/link";
 
 const Login = () => {
   const [form, setForm] = useState({
@@ -18,19 +19,24 @@ const Login = () => {
     } else if (!form.email) {
       setBlank("noEmail");
     } else {
-      let response = await axios.post("/api/login", JSON.stringify(form), {
-        headers: { "Content-Type": "application/json" },
-      });
-      if (response.status === 200) {
+      try {
+        await axios.post("/api/login", JSON.stringify(form), {
+          headers: { "Content-Type": "application/json" },
+        });
         window.location.href = "/";
-      } else {
-        alert("Invalid credentials");
+      } catch (errors) {
+        if (errors.response.status === 403) {
+          alert(errors.response.data);
+        }
+        if (errors.response.status === 401) {
+          alert("Invalid credentials");
+        }
       }
     }
   };
   return (
-    <Layout>
-      <div className={`text-center ${s.formSignin}`}>
+    <Layout title={"Sign In"}>
+      <div className={`text-center ${s.formSignin} mb-60 mt-60`}>
         <form className="mt-10" onSubmit={(e) => handleSubmit(e)}>
           <h1 className="h3 mb-4 fw-normal">Sign in</h1>
           {(blank === "noEmail" || blank === "noEmailAndPassword") && (
@@ -78,7 +84,10 @@ const Login = () => {
 
             <label htmlFor="floatingPassword">Password</label>
           </div>
-
+          <div className="mb-2">
+            <span>Don’t you have an account?</span>{" "}
+            <Link href={`/signup`}>Sign up</Link>
+          </div>
           <button className="w-100 btn btn-lg btn-primary" type="submit">
             Sign in
           </button>

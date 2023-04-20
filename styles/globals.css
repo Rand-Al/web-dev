@@ -1,5 +1,14 @@
-.mt-10 {
+.mt-40 {
   margin-top: 40px;
+}
+.mb-40 {
+  margin-bottom: 40px;
+}
+.mt-60 {
+  margin-top: 60px;
+}
+.mb-60 {
+  margin-bottom: 60px;
 }
 .flex-auto {
   flex: 1 1 auto;

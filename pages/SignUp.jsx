@@ -2,6 +2,7 @@ import s from "../styles/Signup.module.css";
 import { useState } from "react";
 import axios from "axios";
 import Layout from "./Layout";
+import Link from "next/link";
 
 const SignUp = () => {
   const [form, setForm] = useState({
@@ -13,7 +14,7 @@ const SignUp = () => {
     phone: "",
   });
   const [blank, setBlank] = useState("");
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.email && !form.password) {
       setBlank("noEmailAndPassword");
@@ -22,7 +23,7 @@ const SignUp = () => {
     } else if (!form.email) {
       setBlank("noEmail");
     } else {
-      axios.post("/api/registration", form).catch((err) => console.log(err));
+      const response = await axios.post("/api/registration", form);
       setForm({
         email: "",
         password: "",
@@ -32,11 +33,14 @@ const SignUp = () => {
         phone: "",
       });
       setBlank("");
+      if (response.status === 200) {
+        window.location.href = "/";
+      }
     }
   };
   return (
-    <Layout>
-      <div className={`text-center ${s.formSignin}`}>
+    <Layout title={"Sign Up"}>
+      <div className={`text-center ${s.formSignin} mb-60 mt-4`}>
         <form className="mt-10" onSubmit={(e) => handleSubmit(e)}>
           <h1 className="h3 mb-4 fw-normal">Sign Up</h1>
           {(blank === "noEmail" || blank === "noEmailAndPassword") && (
@@ -141,6 +145,10 @@ const SignUp = () => {
               }
             />
             <label htmlFor="floatingPhone">Phone</label>
+          </div>
+          <div className="mb-2">
+            <span>Already have an account? </span>{" "}
+            <Link href={`/`}>Log in</Link>
           </div>
           <button className="w-100 btn btn-lg btn-primary" type="submit">
             Sign in

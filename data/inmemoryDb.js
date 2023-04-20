@@ -110,7 +110,7 @@ if (!data.comments) {
   data.comments = [];
 }
 if (!data.userIdKey) {
-  data.userId = 5;
+  data.userIdKey = 5;
 }
 if (!data.commentIdKey) {
   data.commentIdKey = 1;
@@ -125,7 +125,15 @@ const db = {
     const data = fs.readFileSync(filename);
     return JSON.parse(data).users;
   },
-
+  editUser(user) {
+    const data = JSON.parse(fs.readFileSync(filename));
+    const exUser = data.users.find((u) => user.id === u.id);
+    exUser.firstName = user.firstName;
+    exUser.lastName = user.lastName;
+    exUser.age = user.age;
+    exUser.phone = user.phone;
+    fs.writeFileSync(filename, JSON.stringify(data));
+  },
   addUser(user) {
     const data = JSON.parse(fs.readFileSync(filename));
 
@@ -190,8 +198,12 @@ const db = {
   },
   editCourse(course) {
     const data = JSON.parse(fs.readFileSync(filename));
-    const indexOfCourse = data.courses.indexOf(course);
-    console.log(indexOfCourse);
+    const exCourse = data.courses.find((c) => course.id === c.id);
+    exCourse.title = course.title;
+    exCourse.description = course.description;
+    exCourse.category = course.category;
+    exCourse.image = course.image;
+    exCourse.tag = course.tag;
     fs.writeFileSync(filename, JSON.stringify(data));
   },
 };
