@@ -1,14 +1,53 @@
 import { useRouter } from "next/router";
 import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions } from "../../lib/session";
+import { useState } from "react";
 import axios from "axios";
 import Layout from "../Layout";
-import Image from "next/image";
 
-const Course = ({ coursesList, user }) => {
+const Course = ({ coursesList, usersList, user }) => {
   const router = useRouter();
   const courseId = Number(router.query.id);
   const course = coursesList.filter((course) => course.id === courseId)[0];
+  const [comment, setComment] = useState("");
+  const [comments, setComments] = useState(course.comments);
+
+  const userId = user.id;
+  const addComment = async () => {
+    try {
+      const res = await axios.post("/api/comments", {
+        comment,
+        userId,
+        courseId,
+      });
+      setComment("");
+      setComments((prev) => [
+        ...prev,
+        {
+          body: comment,
+          userId: userId,
+          courseId: courseId,
+        },
+      ]);
+      console.log(res);
+    } catch (errors) {
+      console.log(errors);
+    }
+  };
+  const deleteComment = async (id, courseId, userId) => {
+    try {
+      const res = await axios.post(`/api/comments/`, {
+        id,
+        userId,
+        courseId,
+        delete: true,
+      });
+      console.log(res);
+      setComments(comments.filter((comment) => comment.id !== id));
+    } catch (errors) {
+      console.log(errors);
+    }
+  };
   return (
     <Layout user={user} title={course.title} courseTitle={course.title}>
       <div className="container mt-10">
@@ -21,84 +60,106 @@ const Course = ({ coursesList, user }) => {
           </div>
         </div>
         <section className="w-100 p-4">
-          <div className="row d-flex justify-content-center text-dark">
-            <div className="col-md-11 col-lg-9 col-xl-7">
-              <div className="d-flex flex-start mb-4">
-                <img
-                  className="rounded-circle shadow-1-strong me-3"
-                  src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(32).webp"
-                  alt="avatar"
-                  width="65"
-                  height="65"
-                />
-                <div className="card w-100">
-                  <div className="card-body p-4">
-                    <div className="">
-                      <h5>Johny Cash</h5>
-                      <p className="small">3 hours ago</p>
-                      <p>
-                        Cras sit amet nibh libero, in gravida nulla. Nulla vel
-                        metus scelerisque ante sollicitudin. Cras purus odio,
-                        vestibulum in vulputate at, tempus viverra turpis. Fusce
-                        condimentum nunc ac nisi vulputate fringilla. Donec
-                        lacinia congue felis in faucibus ras purus odio,
-                        vestibulum in vulputate at, tempus viverra turpis.
-                      </p>
+          {comments?.map((comment) => {
+            const user = usersList.filter(
+              (user) => user.id === comment.userId
+            )[0];
 
-                      <div className="d-flex justify-content-between align-items-center">
-                        <div className="d-flex align-items-center">
-                          <a href="#!" className="link-muted me-2">
-                            <i className="fas fa-thumbs-up me-1"></i>132
-                          </a>
-                          <a href="#!" className="link-muted">
-                            <i className="fas fa-thumbs-down me-1"></i>15
-                          </a>
+            const getFullName = (firstName, lastName) => {
+              if (firstName === "" && lastName === "") {
+                return user.email;
+              } else if (firstName === "") {
+                return lastName;
+              } else if (lastName === "") {
+                return firstName;
+              } else {
+                return `${firstName} ${lastName}`;
+              }
+            };
+            const fullName = getFullName(user.firstName, user.lastName);
+            return (
+              <div
+                className="row d-flex justify-content-center text-dark"
+                key={comment.id}
+              >
+                <div className="col-md-11 col-lg-9 col-xl-7">
+                  <div className="d-flex flex-start mb-4">
+                    <img
+                      className="rounded-circle shadow-1-strong me-3"
+                      src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(32).webp"
+                      alt="avatar"
+                      width="65"
+                      height="65"
+                    />
+                    <div className="card w-100">
+                      <div className="card-body p-4">
+                        <div className="">
+                          <h5>{fullName}</h5>
+                          <p className="small">3 hours ago</p>
+                          <p>{comment.body}</p>
+
+                          <div className="d-flex justify-content-between align-items-center">
+                            <div className="d-flex align-items-center">
+                              <a href="#!" className="link-muted me-2">
+                                <i className="fas fa-thumbs-up me-1"></i>132
+                              </a>
+                              <a href="#!" className="link-muted">
+                                <i className="fas fa-thumbs-down me-1"></i>15
+                              </a>
+                            </div>
+                            <button
+                              onClick={() =>
+                                deleteComment(comment.id, courseId, user.id)
+                              }
+                              href="#!"
+                              className="link-muted"
+                            >
+                              Reply
+                            </button>
+                          </div>
                         </div>
-                        <a href="#!" className="link-muted">
-                          <i className="fas fa-reply me-1"></i> Reply
-                        </a>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+            );
+          })}
+
+          <div className="card-body p-4">
+            <div className="d-flex flex-start w-100">
+              <div className="w-100">
+                <h5>Add a comment</h5>
+                <div className="form-outline">
+                  <textarea
+                    className="form-control"
+                    id="textAreaExample"
+                    rows="4"
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                  ></textarea>
+                  <label className="form-label" htmlFor="textAreaExample">
+                    What is your view?
+                  </label>
+                  <div className="form-notch">
+                    <div className="form-notch-leading"></div>
+                    <div className="form-notch-middle"></div>
+                    <div className="form-notch-trailing"></div>
+                  </div>
+                </div>
+                <div className="d-flex mt-3 flex-row-reverse">
+                  <button
+                    type="button"
+                    className="btn btn-success"
+                    onClick={() => addComment()}
+                  >
+                    Send
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </section>
-        <div className="card-body p-4">
-          <div className="d-flex flex-start w-100">
-            <img
-              className="rounded-circle shadow-1-strong me-3"
-              src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(21).webp"
-              alt="avatar"
-              width="65"
-              height="65"
-            />
-            <div className="w-100">
-              <h5>Add a comment</h5>
-              <div className="form-outline">
-                <textarea
-                  className="form-control"
-                  id="textAreaExample"
-                  rows="4"
-                ></textarea>
-                <label className="form-label" htmlFor="textAreaExample">
-                  What is your view?
-                </label>
-                <div className="form-notch">
-                  <div className="form-notch-leading"></div>
-                  <div className="form-notch-middle"></div>
-                  <div className="form-notch-trailing"></div>
-                </div>
-              </div>
-              <div className="d-flex mt-3 flex-row-reverse">
-                <button type="button" className="btn btn-success ">
-                  Send
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </Layout>
   );
@@ -112,6 +173,8 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   const user = req.session.user;
   const resCourses = await axios.get(`http://127.0.0.1:3000/api/courses`);
   const coursesList = resCourses.data;
+  const resUsers = await axios.get(`http://127.0.0.1:3000/api/users`);
+  const usersList = resUsers.data;
   if (user === undefined) {
     return {
       redirect: {
@@ -122,7 +185,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   }
 
   return {
-    props: { coursesList, user: req.session.user },
+    props: { coursesList, usersList, user: req.session.user },
   };
 },
 sessionOptions);

@@ -21,6 +21,7 @@ async function loginRoute(req, res) {
     isLoggedIn: true,
     login: user.email,
     role: dbUser.role,
+    id: dbUser.id,
   };
   req.session.user = sessionUser;
 

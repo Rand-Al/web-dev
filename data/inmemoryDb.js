@@ -107,13 +107,26 @@ if (!data.categories) {
 }
 
 if (!data.comments) {
-  data.comments = [];
+  data.comments = [
+    {
+      id: 1,
+      body: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quia ipsa, modi minus natus nulla quo explicabo debitis, doloribus aut fugit a laboriosam nisi. Laudantium, odit perferendis nemo doloremque perspiciatis laboriosam!",
+      userId: 9,
+      courseId: 3,
+    },
+    {
+      id: 2,
+      body: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quia ipsa, modi minus natus nulla quo explicabo debitis, doloribus aut fugit a laboriosam nisi. Laudantium, odit perferendis nemo doloremque perspiciatis laboriosam!",
+      userId: 10,
+      courseId: 3,
+    },
+  ];
 }
 if (!data.userIdKey) {
   data.userIdKey = 5;
 }
 if (!data.commentIdKey) {
-  data.commentIdKey = 1;
+  data.commentIdKey = 3;
 }
 if (!data.courseIdKey) {
   data.courseIdKey = 2;
@@ -136,9 +149,8 @@ const db = {
   },
   addUser(user) {
     const data = JSON.parse(fs.readFileSync(filename));
-
     const newUser = { ...user };
-    newUser.id = data.userId++;
+    newUser.id = data.userIdKey++;
     data.users.push(newUser);
 
     fs.writeFileSync(filename, JSON.stringify(data));
@@ -169,9 +181,15 @@ const db = {
     data.categories.push(category);
     fs.writeFileSync(filename, JSON.stringify(data));
   },
+  getComments() {
+    const data = JSON.parse(fs.readFileSync(filename));
+    return data.comments;
+  },
   addComment(comment, userId, courseId) {
     const data = JSON.parse(fs.readFileSync(filename));
     comment.id = data.commentIdKey++;
+    comment.userId = userId;
+    comment.courseId = courseId;
     const user = data.users.find((user) => user.id === userId);
     if (!Array.isArray(user.comments)) {
       user.comments = [];
@@ -183,6 +201,17 @@ const db = {
     }
     course.comments.push(comment);
 
+    fs.writeFileSync(filename, JSON.stringify(data));
+  },
+  deleteComment(id, courseId, userId) {
+    console.log(id, userId, courseId);
+    const data = JSON.parse(fs.readFileSync(filename));
+    const user = data.users.find((user) => user.id === userId);
+    console.log(user);
+    user.comments = user.comments.filter((comment) => comment.id !== id);
+    const course = data.courses.find((course) => course.id === courseId);
+    console.log(course);
+    course.comments = course.comments.filter((comment) => comment.id !== id);
     fs.writeFileSync(filename, JSON.stringify(data));
   },
   addCourse(course) {
