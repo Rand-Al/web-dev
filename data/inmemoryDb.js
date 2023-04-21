@@ -16,6 +16,7 @@ if (!data.users) {
       age: 18,
       role: "admin",
       isApproved: true,
+      ava: "/images/ava.webp",
     },
     {
       id: 2,
@@ -27,6 +28,7 @@ if (!data.users) {
       age: 18,
       role: "user",
       isApproved: false,
+      ava: "/images/ava.webp",
     },
     {
       id: 3,
@@ -38,6 +40,7 @@ if (!data.users) {
       age: 18,
       role: "user",
       isApproved: false,
+      ava: "/images/ava.webp",
     },
     {
       id: 4,
@@ -49,6 +52,7 @@ if (!data.users) {
       age: 18,
       role: "user",
       isApproved: false,
+      ava: "/images/ava.webp",
     },
   ];
 }
@@ -106,28 +110,13 @@ if (!data.categories) {
   ];
 }
 
-if (!data.comments) {
-  data.comments = [
-    {
-      id: 1,
-      body: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quia ipsa, modi minus natus nulla quo explicabo debitis, doloribus aut fugit a laboriosam nisi. Laudantium, odit perferendis nemo doloremque perspiciatis laboriosam!",
-      userId: 9,
-      courseId: 3,
-    },
-    {
-      id: 2,
-      body: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quia ipsa, modi minus natus nulla quo explicabo debitis, doloribus aut fugit a laboriosam nisi. Laudantium, odit perferendis nemo doloremque perspiciatis laboriosam!",
-      userId: 10,
-      courseId: 3,
-    },
-  ];
-}
 if (!data.userIdKey) {
   data.userIdKey = 5;
 }
 if (!data.commentIdKey) {
-  data.commentIdKey = 3;
+  data.commentIdKey = 1;
 }
+
 if (!data.courseIdKey) {
   data.courseIdKey = 2;
 }

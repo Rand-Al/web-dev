@@ -1,9 +1,10 @@
 import { useRouter } from "next/router";
 import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions } from "../../lib/session";
-import { useState } from "react";
+import {, useState } from "react";
 import axios from "axios";
 import Layout from "../Layout";
+import Image from "next/image";
 
 const Course = ({ coursesList, usersList, user }) => {
   const router = useRouter();
@@ -21,14 +22,28 @@ const Course = ({ coursesList, usersList, user }) => {
         courseId,
       });
       setComment("");
-      setComments((prev) => [
-        ...prev,
-        {
-          body: comment,
-          userId: userId,
-          courseId: courseId,
-        },
-      ]);
+      if (comments.length < 1) {
+        setComments([
+          {
+            id: 1,
+            body: comment,
+            userId: userId,
+            courseId: courseId,
+          },
+        ]);
+      } else {
+        setComments((prev) => [
+          ...prev,
+          {
+            id: prev[prev.length - 1].id++,
+            body: comment,
+            userId: userId,
+            courseId: courseId,
+          },
+        ]);
+      }
+      я;
+
       console.log(res);
     } catch (errors) {
       console.log(errors);
@@ -64,7 +79,7 @@ const Course = ({ coursesList, usersList, user }) => {
             const user = usersList.filter(
               (user) => user.id === comment.userId
             )[0];
-
+            console.log(comment.id);
             const getFullName = (firstName, lastName) => {
               if (firstName === "" && lastName === "") {
                 return user.email;
@@ -84,9 +99,9 @@ const Course = ({ coursesList, usersList, user }) => {
               >
                 <div className="col-md-11 col-lg-9 col-xl-7">
                   <div className="d-flex flex-start mb-4">
-                    <img
+                    <Image
                       className="rounded-circle shadow-1-strong me-3"
-                      src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(32).webp"
+                      src={user.ava}
                       alt="avatar"
                       width="65"
                       height="65"

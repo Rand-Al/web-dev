@@ -4,6 +4,7 @@ import { sessionOptions } from "../../lib/session";
 import axios from "axios";
 import s from "../../styles/Profile.module.css";
 import { useState } from "react";
+import Image from "next/image";
 
 const Profile = ({ usersList, user }) => {
   const [currentUser, setCurrentUser] = useState(
@@ -106,10 +107,12 @@ const Profile = ({ usersList, user }) => {
             className={`card-body text-center card mb-4 flexBasis ${s.flexBasis}`}
           >
             <div className="card-body text-center">
-              <img
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+              <Image
+                src={currentUser.ava}
                 alt="avatar"
-                className={`rounded-circle img-fluid ${s.imgWidth}`}
+                className={`rounded-circle img-fluid `}
+                width={`150`}
+                height={`200`}
               />
               <h5 className="my-3">{fullName}</h5>
               <p>
