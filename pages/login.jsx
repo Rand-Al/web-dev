@@ -25,11 +25,12 @@ const Login = () => {
         });
         window.location.href = "/";
       } catch (errors) {
+        console.log(errors);
         if (errors.response.status === 403) {
           alert(errors.response.data);
         }
         if (errors.response.status === 401) {
-          alert("Invalid credentials");
+          alert(errors.response.data);
         }
       }
     }
@@ -38,6 +39,7 @@ const Login = () => {
     <Layout title={"Sign In"}>
       <div className={`text-center ${s.formSignin} mb-60 mt-60`}>
         <form className="mt-10" onSubmit={(e) => handleSubmit(e)}>
+          <div className="errors">{}</div>
           <h1 className="h3 mb-4 fw-normal">Sign in</h1>
           {(blank === "noEmail" || blank === "noEmailAndPassword") && (
             <span>Email is required!</span>

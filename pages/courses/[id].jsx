@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions } from "../../lib/session";
-import {, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import Layout from "../Layout";
 import Image from "next/image";
@@ -14,6 +14,7 @@ const Course = ({ coursesList, usersList, user }) => {
   const [comments, setComments] = useState(course.comments);
 
   const userId = user.id;
+  const role = user.role;
   const addComment = async () => {
     try {
       const res = await axios.post("/api/comments", {
@@ -69,7 +70,9 @@ const Course = ({ coursesList, usersList, user }) => {
         <div className="p-5 mb-4 bg-body-tertiary rounded-3 mt-4">
           <div className="container-fluid">
             <h1 className="display-5 fw-bold text-center">{course.title}</h1>
-            <img src={course.image} alt="" className="float p-3 radius-img" />
+            <div className="image-ibg-course-details">
+              <img src={course.image} alt="" className="float p-3 radius-img" />
+            </div>
 
             <p className="fs-4 px-3">{course.description}</p>
           </div>
@@ -98,19 +101,24 @@ const Course = ({ coursesList, usersList, user }) => {
                 key={comment.id}
               >
                 <div className="col-md-11 col-lg-9 col-xl-7">
-                  <div className="d-flex flex-start mb-4">
-                    <Image
-                      className="rounded-circle shadow-1-strong me-3"
-                      src={user.ava}
-                      alt="avatar"
-                      width="65"
-                      height="65"
-                    />
+                  <div className="d-flex flex-start mb-4 gap-3">
+                    <div className="containerIbg">
+                      <div className="image-ibg">
+                        <Image
+                          className="rounded-circle shadow-1-strong me-3"
+                          src={user.ava}
+                          alt="avatar"
+                          width="65"
+                          height="65"
+                        />
+                      </div>
+                    </div>
+
                     <div className="card w-100">
                       <div className="card-body p-4">
                         <div className="">
                           <h5>{fullName}</h5>
-                          <p className="small">3 hours ago</p>
+                          {/* <p className="small">3 hours ago</p> */}
                           <p>{comment.body}</p>
 
                           <div className="d-flex justify-content-between align-items-center">
@@ -122,15 +130,18 @@ const Course = ({ coursesList, usersList, user }) => {
                                 <i className="fas fa-thumbs-down me-1"></i>15
                               </a>
                             </div>
-                            <button
-                              onClick={() =>
-                                deleteComment(comment.id, courseId, user.id)
-                              }
-                              href="#!"
-                              className="link-muted"
-                            >
-                              Reply
-                            </button>
+                            {(userId === comment.userId ||
+                              role === "admin") && (
+                              <button
+                                onClick={() =>
+                                  deleteComment(comment.id, courseId, user.id)
+                                }
+                                href="#!"
+                                className="link-muted btn btn-danger"
+                              >
+                                Delete
+                              </button>
+                            )}
                           </div>
                         </div>
                       </div>

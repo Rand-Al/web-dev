@@ -13,7 +13,7 @@ export default function Home({ coursesList, user }) {
             Level
           </h1>
 
-          <div className="d-flex justify-content-between flex-wrap ">
+          <div className="d-flex align-items-center justify-content-center flex-wrap gap-3">
             {coursesList.map((course) => (
               <Card key={course.id} course={course} />
             ))}

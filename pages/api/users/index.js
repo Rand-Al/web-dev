@@ -14,4 +14,8 @@ export default function handler(req, res) {
     inmemoryDb.editUser(user);
     return res.status(200).end();
   }
+  if (req.method === "POST") {
+    inmemoryDb.editAva(req.body.userId, req.body.filepath);
+    return res.status(200).end();
+  }
 }

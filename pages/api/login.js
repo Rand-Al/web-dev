@@ -8,20 +8,21 @@ async function loginRoute(req, res) {
     .getUsers()
     .find((dbUser) => dbUser.email === user.email);
   if (
+    !dbUser ||
     !user ||
     user.email !== dbUser.email ||
     user.password !== dbUser.password
   ) {
-    res.status(401).end();
+    res.status(401).json("Email and/or password incorrect!");
   }
-  if (dbUser.isApproved === false) {
+  if (dbUser?.isApproved === false) {
     res.status(403).json("Your account is not approved!");
   }
   const sessionUser = {
     isLoggedIn: true,
     login: user.email,
-    role: dbUser.role,
-    id: dbUser.id,
+    role: dbUser?.role,
+    id: dbUser?.id,
   };
   req.session.user = sessionUser;
 

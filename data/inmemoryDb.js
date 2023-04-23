@@ -118,7 +118,7 @@ if (!data.commentIdKey) {
 }
 
 if (!data.courseIdKey) {
-  data.courseIdKey = 2;
+  data.courseIdKey = 5;
 }
 fs.writeFileSync(filename, JSON.stringify(data));
 
@@ -134,6 +134,12 @@ const db = {
     exUser.lastName = user.lastName;
     exUser.age = user.age;
     exUser.phone = user.phone;
+    fs.writeFileSync(filename, JSON.stringify(data));
+  },
+  editAva(userId, filepath) {
+    const data = JSON.parse(fs.readFileSync(filename));
+    const user = data.users.find((u) => u.id === userId);
+    user.ava = filepath;
     fs.writeFileSync(filename, JSON.stringify(data));
   },
   addUser(user) {
@@ -203,10 +209,11 @@ const db = {
     course.comments = course.comments.filter((comment) => comment.id !== id);
     fs.writeFileSync(filename, JSON.stringify(data));
   },
-  addCourse(course) {
+  addCourse(course, image) {
     const data = JSON.parse(fs.readFileSync(filename));
     const newCourse = { ...course };
-    newCourse.id = course.courseIdKey++;
+    newCourse.id = data.courseIdKey++;
+    newCourse.image = image;
     data.courses.push(newCourse);
     fs.writeFileSync(filename, JSON.stringify(data));
   },
@@ -214,14 +221,22 @@ const db = {
     const data = fs.readFileSync(filename);
     return JSON.parse(data).courses;
   },
-  editCourse(course) {
+  editCourse(course, image) {
     const data = JSON.parse(fs.readFileSync(filename));
     const exCourse = data.courses.find((c) => course.id === c.id);
+    console.log(course);
     exCourse.title = course.title;
     exCourse.description = course.description;
     exCourse.category = course.category;
-    exCourse.image = course.image;
+    if (image) {
+      exCourse.image = image;
+    }
     exCourse.tag = course.tag;
+    fs.writeFileSync(filename, JSON.stringify(data));
+  },
+  deleteCourse(courseId) {
+    const data = JSON.parse(fs.readFileSync(filename));
+    data.courses = data.courses.filter((course) => course.id !== courseId);
     fs.writeFileSync(filename, JSON.stringify(data));
   },
 };

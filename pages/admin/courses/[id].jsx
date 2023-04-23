@@ -7,6 +7,7 @@ import { sessionOptions } from "../../../lib/session";
 
 const CourseEdit = ({ coursesList, categoriesList, user }) => {
   const router = useRouter();
+  let path = "";
   const courseId = Number(router.query.id);
   const [image, setImage] = useState(null);
   const [createObjectURL, setCreateObjectURL] = useState(null);
@@ -46,60 +47,105 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
     newCourse.tag = tags;
     setCourse(newCourse);
   };
-  const uploadImageToState = (event) => {
+  const uploadImageToState = async (event) => {
     if (event.target.files[0]) {
+      event.preventDefault();
       const i = event.target.files[0];
       setImage(i);
       setCreateObjectURL(URL.createObjectURL(i));
-      console.log(URL.createObjectURL(i));
     }
   };
 
-  const uploadToServer = async (e) => {
+  const handleAllChanges = async (e) => {
     e.preventDefault();
-    const body = new FormData();
-    body.append("file", image);
-    const response = await axios.post("/api/upload", body);
-    console.log(response);
+    const formData = new FormData();
+    formData.append("avatar", image);
+    const responseUpload = await axios.post("/api/upload", formData);
+    const { filePath } = await responseUpload.data;
+    const url = filePath;
+    const localPath = url.match(/\/[\w.-]+\.[\w]+$/)[0];
+    path = localPath;
+    const responseCourse = await axios.put("/api/courses", {
+      course,
+      image: path,
+    });
+    if (responseCourse.status === 200) {
+      router.push("/admin/courses");
+    }
   };
-  const handleChanges = () => {
-    axios.put("/api/courses", course).then((res) => console.log(res));
+  const handleChanges = async (e) => {
+    e.preventDefault();
+    const responseCourse = await axios.put("/api/courses", {
+      course,
+    });
+    if (responseCourse.status === 200) {
+      router.push("/admin/courses");
+    }
   };
-  console.log(course);
   return (
     <Layout user={user}>
       <div className="container">
-        <form>
+        <form className="d-flex flex-column mb-60 mt-60">
           <h1 className="h3 mb-3 fw-normal text-center mt-4 fw-bold">
             <span>Edit course:</span>{" "}
             <span className="underline">{course.title}</span>
           </h1>
-          <div className="form-floating mb-3">
-            <input
-              type="text"
-              className="form-control"
-              id="floatingTitle"
-              placeholder="Title"
-              value={course.title}
-              onChange={(e) =>
-                setCourse((prev) => ({ ...prev, title: e.target.value }))
-              }
-            />
-            <label htmlFor="floatingInput">Title</label>
+          <div className="d-flex align-items-center gap-2">
+            <div className="mb-3 d-flex flex-column gap-1 ">
+              <h4>Select Image</h4>
+              <img
+                src={createObjectURL ? createObjectURL : course.image}
+                width="300"
+                height="auto"
+                alt=""
+              />
+              <label
+                htmlFor="avatar"
+                className="btn btn-primary align-self-start"
+              >
+                {path ? path : "Chose Photo"}
+                <input
+                  type="file"
+                  id="avatar"
+                  accept="image/*"
+                  onChange={uploadImageToState}
+                  className="absolute"
+                />
+              </label>
+            </div>
+            <div className="flex-grow-1">
+              <div className="form-floating mb-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  id="floatingTitle"
+                  placeholder="Title"
+                  value={course.title}
+                  onChange={(e) =>
+                    setCourse((prev) => ({ ...prev, title: e.target.value }))
+                  }
+                />
+                <label htmlFor="floatingInput">Title</label>
+              </div>
+              <div className="form-floating mb-3">
+                <textarea
+                  type="text"
+                  className="form-control textarea"
+                  id="floatingArea"
+                  placeholder="Description"
+                  value={course.description}
+                  onChange={(e) =>
+                    setCourse((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
+                ></textarea>
+                <label htmlFor="floatingPassword">Description</label>
+              </div>
+            </div>
           </div>
-          <div className="form-floating mb-3">
-            <textarea
-              type="text"
-              className="form-control textarea"
-              id="floatingArea"
-              placeholder="Description"
-              value={course.description}
-              onChange={(e) =>
-                setCourse((prev) => ({ ...prev, description: e.target.value }))
-              }
-            ></textarea>
-            <label htmlFor="floatingPassword">Description</label>
-          </div>
+
           <div className="form-floating d-flex mb-3 align-items-center gap-2">
             <div className="border flex-grow-1 p-3 d-flex gap-3 flex-wrap">
               {course.category.map((category) => {
@@ -155,25 +201,23 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
             />
             <label htmlFor="floatingInput">Tags</label>
           </div>
-          <div>
-            <img src={createObjectURL} />
-            <h4>Select Image</h4>
-            <input type="file" name="myImage" onChange={uploadImageToState} />
+          {createObjectURL ? (
             <button
-              className="btn btn-primary"
+              onClick={(e) => handleAllChanges(e)}
+              className="align-self-end btn btn-lg btn-primary"
               type="submit"
-              onClick={(e) => uploadToServer(e)}
             >
-              Send to server
+              Confirm changes
             </button>
-          </div>
-          <button
-            onClick={() => handleChanges()}
-            className="w-100 btn btn-lg btn-primary"
-            type="submit"
-          >
-            Sign in
-          </button>
+          ) : (
+            <button
+              onClick={(e) => handleChanges(e)}
+              className="align-self-end btn btn-lg btn-primary"
+              type="submit"
+            >
+              Confirm changes
+            </button>
+          )}
         </form>
       </div>
     </Layout>

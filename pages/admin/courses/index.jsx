@@ -9,6 +9,15 @@ import AdminLayout from "@/layout/AdminLayout";
 
 const Courses = ({ coursesList, user }) => {
   const [courses, setCourses] = useState(coursesList);
+  const deleteCourse = async (courseId) => {
+    const response = await axios.post("/api/courses", {
+      courseId: courseId,
+      delete: true,
+    });
+    if (response.status === 200) {
+      setCourses((prev) => prev.filter((c) => c.id !== courseId));
+    }
+  };
   return (
     <Layout user={user} title={"Courses"}>
       <AdminLayout>
@@ -19,7 +28,7 @@ const Courses = ({ coursesList, user }) => {
               Add Course
             </Link>
           </h2>
-          <table className="table table-striped table-sm">
+          <table className="table table-striped table-sm ">
             <thead>
               <tr>
                 <th scope="col">Course Id</th>
@@ -28,9 +37,10 @@ const Courses = ({ coursesList, user }) => {
                 <th scope="col">Category</th>
                 <th scope="col">Tag</th>
                 <th scope="col">Image</th>
+                <th scope="col">Action</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="">
               {courses.map((course) => {
                 return (
                   <tr key={course.id}>
@@ -48,15 +58,24 @@ const Courses = ({ coursesList, user }) => {
                       ))}
                     </td>
                     <td>
-                      <img src={course.image} alt="" />
+                      <div className="image-ibg-course">
+                        <img src={course.image} alt="" />
+                      </div>
                     </td>
-                    <td>
+                    <td className="d-flex flex-column gap-3 p-2">
                       <Link
                         href={`/admin/courses/${course.id}`}
-                        className="btn btn-warning"
+                        className="btn btn-warning "
                       >
                         Edit
                       </Link>
+                      <button
+                        onClick={() => deleteCourse(course.id)}
+                        href={`/admin/courses/${course.id}`}
+                        className="btn btn-danger "
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 );

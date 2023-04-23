@@ -5,19 +5,23 @@ import axios from "axios";
 import s from "../../styles/Profile.module.css";
 import { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 const Profile = ({ usersList, user }) => {
+  const router = useRouter();
+  const [createObjectURL, setCreateObjectURL] = useState(null);
   const [currentUser, setCurrentUser] = useState(
     usersList.find((userFromDb) => {
       return userFromDb.email === user.login;
     })
   );
+  const [avatar, setAvatar] = useState(null);
+  const [fileName, setFileName] = useState("");
   const getFullName = (firstName, lastName) => {
     return `${firstName} ${lastName}`;
   };
   const fullName = getFullName(currentUser.firstName, currentUser.lastName);
   const [isEdit, setIsEdit] = useState(false);
-
   const handleEdit = async () => {
     try {
       const usersResponse = await axios.put("/api/users", currentUser);
@@ -26,6 +30,34 @@ const Profile = ({ usersList, user }) => {
     } catch (error) {
       console.log(error);
     }
+  };
+  const uploadImageToState = async (e) => {
+    if (e.target.files[0]) {
+      e.preventDefault();
+      const i = e.target.files[0];
+      const fileName = e.target.value.match(/.*\\(.*)/)[1];
+      setFileName(fileName);
+      setAvatar(i);
+      setCreateObjectURL(URL.createObjectURL(i));
+    }
+  };
+
+  const handleImage = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("avatar", avatar);
+    const responseUpload = await axios.post("/api/upload", formData);
+    const { filePath } = await responseUpload.data;
+    const url = filePath;
+    const path = url.match(/\/[\w.-]+\.[\w]+$/)[0];
+    const responseUser = await axios.post(`/api/users`, {
+      filepath: path,
+      userId: currentUser.id,
+    });
+    if (responseUser.status === 200) {
+      router.push("/profile");
+    }
+    setFileName("");
   };
   return (
     <Layout user={user} title={"Profile"}>
@@ -101,23 +133,44 @@ const Profile = ({ usersList, user }) => {
         </section>
       ) : (
         <section
-          className={`w-100 p-4 ${s.bgBorder} container d-flex gap-3 mb-60 mt-60`}
+          className={`w-100 p-4 ${s.bgBorder} container d-flex gap-3 mb-60 mt-60 flex-wrap`}
         >
           <div
             className={`card-body text-center card mb-4 flexBasis ${s.flexBasis}`}
           >
             <div className="card-body text-center">
               <Image
-                src={currentUser.ava}
+                src={createObjectURL ? createObjectURL : currentUser.ava}
                 alt="avatar"
-                className={`rounded-circle img-fluid `}
+                className={`rounded img-fluid `}
                 width={`150`}
                 height={`200`}
               />
+
               <h5 className="my-3">{fullName}</h5>
-              <p>
-                <button className="btn btn-primary">Change Photo</button>
-              </p>
+
+              <form
+                onSubmit={handleImage}
+                className="d-flex gap-2 justify-content-center flex-wrap"
+              >
+                <label htmlFor="avatar" className="btn btn-primary">
+                  {fileName ? fileName : "Chose Photo"}
+                  <input
+                    type="file"
+                    id="avatar"
+                    accept="image/*"
+                    onChange={(e) => uploadImageToState(e)}
+                    className="absolute"
+                  />
+                </label>
+                <button
+                  disabled={fileName ? false : true}
+                  type="submit"
+                  className="btn btn-primary"
+                >
+                  Change Photo
+                </button>
+              </form>
             </div>
           </div>
           <div className="card-body text-center card mb-4">

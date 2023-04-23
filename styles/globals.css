@@ -64,3 +64,58 @@ a.active {
 .underline {
   text-decoration: underline !important;
 }
+.absolute {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
+[class*="-ibg"] {
+  position: relative;
+}
+[class*="-ibg"] img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+}
+[class*="-ibg_contain"] img {
+  object-fit: contain;
+}
+
+.h-100 {
+  height: 100%;
+}
+.containerIbg {
+  width: 80px;
+  height: 80px;
+}
+.image-ibg {
+  padding-bottom: 50%;
+  width: 100% !important;
+  height: 90% !important;
+}
+.container-ibg .image-img img {
+}
+.flex-30 {
+  flex: 1 1 1%;
+}
+.image-ibg-course {
+  padding-bottom: 55%;
+  width: 200px;
+  height: 50px;
+  object-fit: contain !important;
+}
+.image-ibg-course-details {
+  float: left;
+  padding-bottom: 20%;
+  width: 400px;
+}
+.btn-group {
+  height: 100% !important;
+  width: 100% !important;
+  padding-bottom: 50px !important;
+}
