@@ -117,5 +117,8 @@ a.active {
 .btn-group {
   height: 100% !important;
   width: 100% !important;
-  padding-bottom: 50px !important;
+  /* padding-bottom: 50px !important; */
+}
+.dropdown-item {
+  cursor: pointer;
 }

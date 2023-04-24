@@ -3,23 +3,31 @@ import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions } from "../lib/session";
 import Layout from "./Layout";
 import axios from "axios";
+import s from "../styles/Home.module.css";
+
 export default function Home({ coursesList, user }) {
   return (
     <Layout user={user} title={"Home"}>
-      <div className="container">
-        <div className="p-5 mb-4 bg-body-tertiary rounded-3 my-4 ">
-          <h1 className="text-center mb-4">
-            From Novice to Pro: Dynamic Web Developer Courses for Every Skill
-            Level
-          </h1>
+      {!coursesList ? (
+        <div className={`${s.networkError}`}>
+          <span>Network error. Try to reload a page.</span>
+        </div>
+      ) : (
+        <div className="container">
+          <div className="p-5 mb-4 bg-body-tertiary rounded-3 my-4 ">
+            <h1 className="text-center mb-4">
+              From Novice to Pro: Dynamic Web Developer Courses for Every Skill
+              Level
+            </h1>
 
-          <div className="d-flex align-items-center justify-content-center flex-wrap gap-3">
-            {coursesList.map((course) => (
-              <Card key={course.id} course={course} />
-            ))}
+            <div className="d-flex align-items-center justify-content-center flex-wrap gap-3">
+              {coursesList.map((course) => (
+                <Card key={course.id} course={course} />
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </Layout>
   );
 }

@@ -5,6 +5,7 @@ import Layout from "./Layout";
 import Link from "next/link";
 
 const Login = () => {
+  const [error, setError] = useState("");
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -27,17 +28,24 @@ const Login = () => {
       } catch (errors) {
         console.log(errors);
         if (errors.response.status === 403) {
-          alert(errors.response.data);
+          setError(errors.response.data);
+          setTimeout(() => {
+            setError("");
+          }, 2000);
         }
         if (errors.response.status === 401) {
-          alert(errors.response.data);
+          setError(errors.response.data);
+          setTimeout(() => {
+            setError("");
+          }, 2500);
         }
       }
     }
   };
   return (
     <Layout title={"Sign In"}>
-      <div className={`text-center ${s.formSignin} mb-60 mt-60`}>
+      {error && <div className={`${s.error} container`}>{error}</div>}
+      <div className={`text-center ${s.formSignin} `}>
         <form className="mt-10" onSubmit={(e) => handleSubmit(e)}>
           <div className="errors">{}</div>
           <h1 className="h3 mb-4 fw-normal">Sign in</h1>

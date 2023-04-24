@@ -3,8 +3,10 @@ import { useState } from "react";
 import axios from "axios";
 import Layout from "./Layout";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const SignUp = () => {
+  const router = useRouter();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -14,6 +16,8 @@ const SignUp = () => {
     phone: "",
   });
   const [blank, setBlank] = useState("");
+  const [uniqueEmail, setUniqueEmail] = useState();
+  const [isSuccess, setIsSuccess] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.email && !form.password) {
@@ -23,34 +27,52 @@ const SignUp = () => {
     } else if (!form.email) {
       setBlank("noEmail");
     } else {
-      const response = await axios.post("/api/registration", form);
-      setForm({
-        email: "",
-        password: "",
-        firstName: "",
-        lastName: "",
-        age: "",
-        phone: "",
-      });
-      setBlank("");
-      if (response.status === 200) {
-        window.location.href = "/";
+      try {
+        const response = await axios.post("/api/registration", form);
+        setForm({
+          email: "",
+          password: "",
+          firstName: "",
+          lastName: "",
+          age: "",
+          phone: "",
+        });
+        setBlank("");
+        if (response.status === 200) {
+          setIsSuccess(true);
+          setTimeout(() => {
+            router.push("/");
+          }, 3000);
+        }
+      } catch (errors) {
+        setUniqueEmail(errors.response.data);
       }
+      console.log(uniqueEmail);
     }
   };
   return (
     <Layout title={"Sign Up"}>
+      {isSuccess && (
+        <div className={`${s.success} container`}>
+          Account created successfully! You can log in after administrator
+          approve your user account .
+        </div>
+      )}
       <div className={`text-center ${s.formSignin} mb-60 mt-4`}>
         <form className="mt-10" onSubmit={(e) => handleSubmit(e)}>
           <h1 className="h3 mb-4 fw-normal">Sign Up</h1>
-          {(blank === "noEmail" || blank === "noEmailAndPassword") && (
-            <span>Email is required!</span>
+          {(blank === "noEmail" ||
+            blank === "noEmailAndPassword" ||
+            uniqueEmail) && (
+            <span>{uniqueEmail ? uniqueEmail : "Email is required!"}</span>
           )}
           <div className="form-floating mb-2">
             <input
               type="email"
               className={`form-control ${
-                (blank === "noEmail" || blank === "noEmailAndPassword") &&
+                (blank === "noEmail" ||
+                  blank === "noEmailAndPassword" ||
+                  uniqueEmail) &&
                 `${s.formError}`
               }`}
               value={form.email}

@@ -8,3 +8,12 @@
 .formError {
   border: 1px solid red;
 }
+.success {
+  border: 1px solid rgba(0, 0, 0, 0.075);
+  border-radius: 5px;
+  background-color: rgba(67, 196, 16, 0.877);
+  width: 100%;
+  padding: 10px 20px;
+  color: #fff;
+  margin-top: 10px;
+}

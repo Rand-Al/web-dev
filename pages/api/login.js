@@ -13,7 +13,7 @@ async function loginRoute(req, res) {
     user.email !== dbUser.email ||
     user.password !== dbUser.password
   ) {
-    res.status(401).json("Email and/or password incorrect!");
+    res.status(401).json("Incorrect email and/or password!");
   }
   if (dbUser?.isApproved === false) {
     res.status(403).json("Your account is not approved!");

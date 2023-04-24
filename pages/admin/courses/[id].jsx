@@ -4,11 +4,13 @@ import axios from "axios";
 import Layout from "@/pages/Layout";
 import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions } from "../../../lib/session";
+import s from "../../../styles/Course.module.css";
 
 const CourseEdit = ({ coursesList, categoriesList, user }) => {
   const router = useRouter();
   let path = "";
   const courseId = Number(router.query.id);
+  const [emptyFieldError, setEmptyFieldError] = useState("");
   const [image, setImage] = useState(null);
   const [createObjectURL, setCreateObjectURL] = useState(null);
   const oneCourse = coursesList.filter((course) => courseId === course.id);
@@ -65,21 +67,37 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
     const url = filePath;
     const localPath = url.match(/\/[\w.-]+\.[\w]+$/)[0];
     path = localPath;
-    const responseCourse = await axios.put("/api/courses", {
-      course,
-      image: path,
-    });
-    if (responseCourse.status === 200) {
-      router.push("/admin/courses");
+    if (course.title.length < 1 && course.description.length < 1) {
+      setEmptyFieldError("noTitleAndDescription");
+    } else if (course.title.length < 1) {
+      setEmptyFieldError("noTitle");
+    } else if (course.description.length < 1) {
+      setEmptyFieldError("noDescription");
+    } else {
+      const responseCourse = await axios.put("/api/courses", {
+        course,
+        image: path,
+      });
+      if (responseCourse.status === 200) {
+        router.push("/admin/courses");
+      }
     }
   };
   const handleChanges = async (e) => {
     e.preventDefault();
-    const responseCourse = await axios.put("/api/courses", {
-      course,
-    });
-    if (responseCourse.status === 200) {
-      router.push("/admin/courses");
+    if (course.title.length < 1 && course.description.length < 1) {
+      setEmptyFieldError("noTitleAndDescription");
+    } else if (course.title.length < 1) {
+      setEmptyFieldError("noTitle");
+    } else if (course.description.length < 1) {
+      setEmptyFieldError("noDescription");
+    } else {
+      const responseCourse = await axios.put("/api/courses", {
+        course,
+      });
+      if (responseCourse.status === 200) {
+        router.push("/admin/courses");
+      }
     }
   };
   return (
@@ -114,31 +132,53 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
               </label>
             </div>
             <div className="flex-grow-1">
-              <div className="form-floating mb-3">
+              {(emptyFieldError === "noTitleAndDescription" ||
+                emptyFieldError === "noTitle") && (
+                <div className="px-2 fs-5">Title is required!</div>
+              )}
+              <div className={`form-floating mb-3 `}>
                 <input
                   type="text"
-                  className="form-control"
+                  className={`form-control ${
+                    (emptyFieldError === "noTitleAndDescription" ||
+                      emptyFieldError === "noTitle") &&
+                    s.red
+                  }`}
                   id="floatingTitle"
                   placeholder="Title"
                   value={course.title}
                   onChange={(e) =>
-                    setCourse((prev) => ({ ...prev, title: e.target.value }))
+                    setCourse(
+                      (prev) => ({ ...prev, title: e.target.value }),
+                      setEmptyFieldError("")
+                    )
                   }
                 />
                 <label htmlFor="floatingInput">Title</label>
               </div>
+              {(emptyFieldError === "noTitleAndDescription" ||
+                emptyFieldError === "noDescription") && (
+                <div className="px-2 fs-5">Description is required!</div>
+              )}
               <div className="form-floating mb-3">
                 <textarea
                   type="text"
-                  className="form-control textarea"
+                  className={`form-control textarea ${
+                    (emptyFieldError === "noTitleAndDescription" ||
+                      emptyFieldError === "noDescription") &&
+                    s.red
+                  }`}
                   id="floatingArea"
                   placeholder="Description"
                   value={course.description}
                   onChange={(e) =>
-                    setCourse((prev) => ({
-                      ...prev,
-                      description: e.target.value,
-                    }))
+                    setCourse(
+                      (prev) => ({
+                        ...prev,
+                        description: e.target.value,
+                      }),
+                      setEmptyFieldError("")
+                    )
                   }
                 ></textarea>
                 <label htmlFor="floatingPassword">Description</label>

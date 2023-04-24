@@ -4,7 +4,17 @@
   padding: 15px;
   margin-left: auto;
   margin-right: auto;
+  margin-top: 22px;
 }
 .formError {
   border: 1px solid red;
+}
+.error {
+  border: 1px solid rgba(0, 0, 0, 0.075);
+  border-radius: 5px;
+  background-color: rgb(228, 26, 26);
+  width: 100%;
+  padding: 10px 20px;
+  color: #fff;
+  margin-top: 10px;
 }
