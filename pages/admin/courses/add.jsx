@@ -6,10 +6,11 @@ import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions } from "../../../lib/session";
 import s from "../../../styles/Course.module.css";
 
-const AddCourse = ({ coursesList, categoriesList, user }) => {
+const AddCourse = ({ categoriesList, user }) => {
   const router = useRouter();
   let path = "";
   const [image, setImage] = useState(null);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [createObjectURL, setCreateObjectURL] = useState(null);
   const [course, setCourse] = useState({
     title: "",
@@ -83,7 +84,10 @@ const AddCourse = ({ coursesList, categoriesList, user }) => {
         image: path,
       });
       if (responseCourse.status === 200) {
-        router.push("/admin/courses");
+        setIsSuccess(true);
+        setTimeout(() => {
+          router.push("/admin/courses");
+        }, 2000);
       }
     }
   };
@@ -100,13 +104,21 @@ const AddCourse = ({ coursesList, categoriesList, user }) => {
         course,
       });
       if (responseCourse.status === 200) {
-        router.push("/admin/courses");
+        setIsSuccess(true);
+        setTimeout(() => {
+          router.push("/admin/courses");
+        }, 2000);
       }
     }
   };
   return (
     <Layout user={user}>
       <div className="container">
+        {isSuccess && (
+          <div className={`${s.success} container`}>
+            Course successfully added!
+          </div>
+        )}
         <form className="d-flex flex-column mb-60 mt-60">
           <h1 className="h3 mb-3 fw-normal text-center mt-4 fw-bold">
             <span>Create course:</span>{" "}
@@ -281,8 +293,6 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   res,
 }) {
   const user = req.session.user;
-  const resCourses = await axios.get(`http://localhost:3000/api/courses`);
-  const coursesList = resCourses.data;
   const resCategories = await axios.get(`http://localhost:3000/api/categories`);
   const categoriesList = resCategories.data;
   if (user === undefined) {
@@ -295,7 +305,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   }
 
   return {
-    props: { coursesList, categoriesList, user: req.session.user },
+    props: { categoriesList, user: req.session.user },
   };
 },
 sessionOptions);

@@ -3,9 +3,9 @@ import axios from "axios";
 import { useState } from "react";
 import Link from "next/link";
 import Layout from "@/pages/Layout";
+import AdminLayout from "@/layout/AdminLayout";
 import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions } from "../../../lib/session";
-import AdminLayout from "@/layout/AdminLayout";
 
 const Courses = ({ coursesList, user }) => {
   const [courses, setCourses] = useState(coursesList);
@@ -24,9 +24,17 @@ const Courses = ({ coursesList, user }) => {
         <div className="table-responsive flex-grow-1 p-3">
           <h2 className="d-flex justify-content-between">
             <span>Courses</span>
-            <Link href={`/admin/courses/add`} className="btn btn-primary">
-              Add Course
-            </Link>
+            <div className="d-flex gap-3">
+              <Link
+                className="btn btn-primary"
+                href={`/admin/courses/categories`}
+              >
+                Edit Categories
+              </Link>
+              <Link href={`/admin/courses/add`} className="btn btn-primary">
+                Add Course
+              </Link>
+            </div>
           </h2>
           <table className="table table-striped table-sm ">
             <thead>
@@ -45,7 +53,9 @@ const Courses = ({ coursesList, user }) => {
                 return (
                   <tr key={course.id}>
                     <td>{course.id}</td>
-                    <td>{course.title}</td>
+                    <td>
+                      <Link href={`/courses/${course.id}`}>{course.title}</Link>
+                    </td>
                     <td>{course.description}</td>
                     <td>
                       {course.category.map((category, idx) => (

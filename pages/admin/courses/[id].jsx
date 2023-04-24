@@ -10,6 +10,7 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
   const router = useRouter();
   let path = "";
   const courseId = Number(router.query.id);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [emptyFieldError, setEmptyFieldError] = useState("");
   const [image, setImage] = useState(null);
   const [createObjectURL, setCreateObjectURL] = useState(null);
@@ -79,7 +80,10 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
         image: path,
       });
       if (responseCourse.status === 200) {
-        router.push("/admin/courses");
+        setIsSuccess(true);
+        setTimeout(() => {
+          router.push("/admin/courses");
+        }, 2000);
       }
     }
   };
@@ -96,13 +100,21 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
         course,
       });
       if (responseCourse.status === 200) {
-        router.push("/admin/courses");
+        setIsSuccess(true);
+        setTimeout(() => {
+          router.push("/admin/courses");
+        }, 2000);
       }
     }
   };
   return (
     <Layout user={user}>
       <div className="container">
+        {isSuccess && (
+          <div className={`${s.success} container`}>
+            Course successfully edit!
+          </div>
+        )}
         <form className="d-flex flex-column mb-60 mt-60">
           <h1 className="h3 mb-3 fw-normal text-center mt-4 fw-bold">
             <span>Edit course:</span>{" "}

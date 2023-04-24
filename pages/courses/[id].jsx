@@ -123,7 +123,6 @@ const Course = ({ coursesList, usersList, user }) => {
                           />
                         </div>
                       </div>
-
                       <div className="card w-100">
                         <div className="card-body p-4">
                           <div className="">

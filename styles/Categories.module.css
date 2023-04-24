@@ -1,9 +1,3 @@
-.red {
-  border: 1px solid red;
-}
-.red:focus {
-  border: 2px solid red;
-}
 .success {
   border: 1px solid rgba(0, 0, 0, 0.075);
   border-radius: 5px;

@@ -171,10 +171,11 @@ const db = {
     const data = fs.readFileSync(filename);
     return JSON.parse(data).categories;
   },
-  addCategory(category) {
+  addCategories(categories) {
     const data = JSON.parse(fs.readFileSync(filename));
-    data.categories.push(category);
+    data.categories = categories;
     fs.writeFileSync(filename, JSON.stringify(data));
+    console.log(data.categories);
   },
   getComments() {
     const data = JSON.parse(fs.readFileSync(filename));
