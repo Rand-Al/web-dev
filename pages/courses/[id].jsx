@@ -77,10 +77,12 @@ const Course = ({ coursesList, usersList, user }) => {
             <div className="container-fluid">
               <h1 className="display-5 fw-bold text-center">{course.title}</h1>
               <div className="image-ibg-course-details">
-                <img
+                <Image
                   src={course.image}
                   alt=""
                   className="float p-3 radius-img"
+                  width="1600"
+                  height="400"
                 />
               </div>
 

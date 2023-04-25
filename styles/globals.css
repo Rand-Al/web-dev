@@ -113,6 +113,7 @@ a.active {
   float: left;
   padding-bottom: 20%;
   width: 400px;
+  height: auto;
 }
 .btn-group {
   height: 100% !important;

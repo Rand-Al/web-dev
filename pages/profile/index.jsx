@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 const Profile = ({ usersList, user }) => {
   const router = useRouter();
   const [createObjectURL, setCreateObjectURL] = useState(null);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [currentUser, setCurrentUser] = useState(
     usersList.find((userFromDb) => {
       return userFromDb.email === user.login;
@@ -27,6 +28,10 @@ const Profile = ({ usersList, user }) => {
       const usersResponse = await axios.put("/api/users", currentUser);
       console.log(usersResponse);
       setIsEdit(false);
+      setIsSuccess(true);
+      setTimeout(() => {
+        setIsSuccess(false);
+      }, 2000);
     } catch (error) {
       console.log(error);
     }
@@ -55,12 +60,18 @@ const Profile = ({ usersList, user }) => {
       userId: currentUser.id,
     });
     if (responseUser.status === 200) {
-      router.push("/profile");
+      setIsSuccess(true);
+      setTimeout(() => {
+        setIsSuccess(false);
+      }, 2000);
     }
     setFileName("");
   };
   return (
     <Layout user={user} title={"Profile"}>
+      {isSuccess && (
+        <div className={`${s.success} container`}>Successfully changed!</div>
+      )}
       {isEdit ? (
         <section
           className={`w-100 p-4 ${s.bgBorder} container d-flex gap-3 mt-60 flex-column mb-60`}
