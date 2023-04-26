@@ -7,7 +7,7 @@ import AdminLayout from "@/layout/AdminLayout";
 
 const Admin = ({ user }) => {
   const router = useRouter();
-  console.log(user);
+
   return (
     <Layout user={user} title={"Admin"}>
       <div className="container-fluid d-flex">
@@ -85,7 +85,6 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   res,
 }) {
   const user = req.session.user;
-  console.log(user);
   if (user === undefined) {
     return {
       props: {},

@@ -10,7 +10,6 @@ import axios from "axios";
 const Categories = ({ categoriesList }) => {
   const router = useRouter();
   const [categories, setCategories] = useState(categoriesList.join(", "));
-  console.log(categories);
   const [isBlank, setIsBlank] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const handleCategories = async (e) => {

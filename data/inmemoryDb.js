@@ -67,6 +67,12 @@ if (!data.courses) {
       tag: ["#JavaScript", "#BackEnd"],
       image:
         "https://placehold.jp/30/db3131/ffffff/300x150.png?text=placeholder+image",
+      rating: [
+        {
+          value: 0,
+          userId: null,
+        },
+      ],
     },
     {
       id: 2,
@@ -77,6 +83,12 @@ if (!data.courses) {
       tag: ["#JavaScript", "#BackEnd"],
       image:
         "https://placehold.jp/30/dd6699/ffffff/300x150.png?text=placeholder+image",
+      rating: [
+        {
+          value: 0,
+          userId: null,
+        },
+      ],
     },
     {
       id: 3,
@@ -87,6 +99,12 @@ if (!data.courses) {
       tag: ["#JavaScript", "#BackEnd"],
       image:
         "https://placehold.jp/30/d5d807/ffffff/300x150.png?text=placeholder+image",
+      rating: [
+        {
+          value: 0,
+          userId: null,
+        },
+      ],
     },
     {
       id: 4,
@@ -97,6 +115,12 @@ if (!data.courses) {
       tag: ["#JavaScript", "#BackEnd"],
       image:
         "https://placehold.jp/30/1505e9/ffffff/300x150.png?text=placeholder+image",
+      rating: [
+        {
+          value: 0,
+          userId: null,
+        },
+      ],
     },
   ];
 }
@@ -179,7 +203,6 @@ const db = {
     const data = JSON.parse(fs.readFileSync(filename));
     data.categories = categories;
     fs.writeFileSync(filename, JSON.stringify(data));
-    console.log(data.categories);
   },
   getComments() {
     const data = JSON.parse(fs.readFileSync(filename));
@@ -208,13 +231,12 @@ const db = {
     fs.writeFileSync(filename, JSON.stringify(data));
   },
   deleteComment(id, courseId, userId) {
-    console.log(id, userId, courseId);
     const data = JSON.parse(fs.readFileSync(filename));
     const user = data.users.find((user) => user.id === userId);
-    console.log(user);
+
     user.comments = user.comments.filter((comment) => comment.id !== id);
     const course = data.courses.find((course) => course.id === courseId);
-    console.log(course);
+
     course.comments = course.comments.filter((comment) => comment.id !== id);
     fs.writeFileSync(filename, JSON.stringify(data));
   },
@@ -250,6 +272,7 @@ const db = {
     const newCourse = { ...course };
     newCourse.id = data.courseIdKey++;
     newCourse.image = image;
+    newCourse.rating = [];
     data.courses.push(newCourse);
     fs.writeFileSync(filename, JSON.stringify(data));
   },
@@ -264,7 +287,7 @@ const db = {
   editCourse(course, image) {
     const data = JSON.parse(fs.readFileSync(filename));
     const exCourse = data.courses.find((c) => course.id === c.id);
-    console.log(course);
+
     exCourse.title = course.title;
     exCourse.description = course.description;
     exCourse.category = course.category;
@@ -278,6 +301,35 @@ const db = {
     const data = JSON.parse(fs.readFileSync(filename));
     data.courses = data.courses.filter((course) => course.id !== courseId);
     fs.writeFileSync(filename, JSON.stringify(data));
+  },
+  addCourseRating(rating, courseId, userId) {
+    const data = JSON.parse(fs.readFileSync(filename));
+    const course = data.courses.find((course) => course.id === courseId);
+    const courseRating = course.rating;
+    const ratingInstance = {
+      value: rating,
+      userId,
+    };
+    if (
+      ratingInstance.value !== null &&
+      !courseRating.find((rat) => rat.userId === userId)
+    ) {
+      courseRating.push(ratingInstance);
+    }
+
+    fs.writeFileSync(filename, JSON.stringify(data));
+  },
+  getCourseRating(courseId) {
+    const data = JSON.parse(fs.readFileSync(filename));
+    const course = data.courses.find((course) => course.id === courseId);
+    const ratingArray = course.rating.map((rating) => rating.value);
+    if (ratingArray.length > 0) {
+      const rating = Math.round(
+        ratingArray.reduce((a, b) => a + b) / ratingArray.length
+      );
+      return rating;
+    }
+    return 0;
   },
 };
 

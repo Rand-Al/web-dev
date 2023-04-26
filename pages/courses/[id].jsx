@@ -6,6 +6,7 @@ import axios from "axios";
 import Layout from "../Layout";
 import Image from "next/image";
 import s from "../../styles/Home.module.css";
+import { Rating } from "@mui/material";
 
 const Course = ({ user }) => {
   const router = useRouter();
@@ -13,6 +14,7 @@ const Course = ({ user }) => {
   const [comment, setComment] = useState("");
   const [course, setCourse] = useState([]);
   const [users, setUsers] = useState([]);
+  const [ratingValue, setRatingValue] = useState(0);
   const loadCourse = useCallback(() => {
     axios.get(`/api/courses/${courseId}`).then((res) => setCourse(res.data));
   }, [courseId]);
@@ -36,7 +38,6 @@ const Course = ({ user }) => {
         rating,
       });
       loadCourse();
-      console.log(ratingResponse);
     } catch (errors) {
       console.log(errors);
     }
@@ -72,6 +73,20 @@ const Course = ({ user }) => {
     }
   };
 
+  const addRating = async (newValue, userId, courseId) => {
+    const rating = {
+      value: newValue,
+      userId,
+      courseId,
+    };
+    try {
+      const res = await axios.post("/api/rating", { rating });
+    } catch (errors) {
+      console.log(errors);
+    }
+
+    setRatingValue(newValue);
+  };
   return (
     <Layout user={user} title={course?.title} courseTitle={course?.title}>
       {!course ? (
@@ -94,6 +109,13 @@ const Course = ({ user }) => {
               </div>
 
               <p className="fs-4 px-3">{course.description}</p>
+              <Rating
+                name="simple-controlled"
+                value={ratingValue}
+                onChange={(e, newValue) => {
+                  addRating(newValue, user.id, courseId);
+                }}
+              />
             </div>
           </div>
           <section className="w-100 p-4">
@@ -112,7 +134,6 @@ const Course = ({ user }) => {
                     <div className="d-flex flex-start mb-4 gap-3">
                       <div className="containerIbg">
                         <div className="image-ibg">
-                          {console.log(commentUser)}
                           <Image
                             className="rounded-circle shadow-1-strong me-3"
                             src={commentUser?.ava}

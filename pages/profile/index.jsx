@@ -26,7 +26,6 @@ const Profile = ({ usersList, user }) => {
   const handleEdit = async () => {
     try {
       const usersResponse = await axios.put("/api/users", currentUser);
-      console.log(usersResponse);
       setIsEdit(false);
       setIsSuccess(true);
       setTimeout(() => {

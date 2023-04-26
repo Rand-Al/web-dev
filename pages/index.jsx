@@ -5,26 +5,12 @@ import Layout from "./Layout";
 import axios from "axios";
 import s from "../styles/Home.module.css";
 import { useState } from "react";
-import { Rating, Typography } from "@mui/material";
 
 export default function Home({ coursesList, user }) {
-  const [courses, setCourses] = useState(coursesList);
   const [searchValue, setSearchValue] = useState("");
-  const [searchParam, setSearchParam] = useState("category");
-  const [filteredCourses, setFilteredCourses] = useState([]);
-  const [ratingValue, setRatingValue] = useState("");
-
-  const filterBy = (entity) => {
-    console.log(
-      courses.filter((course) =>
-        course.category.filter((category) => category === entity)
-      )
-    );
-  };
-  console.log(user);
   return (
     <Layout user={user} title={"Home"}>
-      {!courses ? (
+      {!coursesList ? (
         <div className={`${s.networkError}`}>
           <span>Network error. Try to reload a page.</span>
         </div>
@@ -51,24 +37,18 @@ export default function Home({ coursesList, user }) {
                 </svg>
               </div>
             </form>
-            <button onClick={() => filterBy("Go")}>course</button>
             <h1 className="text-center mb-4">
               From Novice to Pro: Dynamic Web Developer Courses for Every Skill
               Level
             </h1>
 
             <div className="d-flex align-items-center justify-content-center flex-wrap gap-3">
-              {courses
+              {coursesList
                 .filter((course) =>
                   course.title.toLowerCase().includes(searchValue.toLowerCase())
                 )
                 .map((course) => (
-                  <Card
-                    key={course.id}
-                    ratingValue={ratingValue}
-                    setRatingValue={setRatingValue}
-                    course={course}
-                  />
+                  <Card key={course.id} course={course} />
                 ))}
             </div>
           </div>
