@@ -1,3 +1,8 @@
+/* @import url("https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&display=swap"); */
+body {
+  font-family: "Roboto" !important;
+}
+
 .mt-40 {
   margin-top: 40px;
 }
@@ -149,4 +154,14 @@ a.active {
 }
 .pt-7 {
   padding-top: 5px;
+}
+.search {
+  position: relative;
+}
+.search-input {
+}
+.search-img {
+  position: absolute;
+  top: 12%;
+  right: 1%;
 }

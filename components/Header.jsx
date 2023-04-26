@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import axios from "axios";
@@ -35,25 +35,7 @@ export default function Header({ user, title, courseTitle }) {
               className={`collapse navbar-collapse justify-content-end`}
               id="navbarSupportedContent"
             >
-              {title !== courseTitle &&
-              user &&
-              router.pathname !== "/profile" ? (
-                <div className="flex-auto">
-                  <form className="d-flex">
-                    <input
-                      className="form-control me-2 width-auto"
-                      type="search"
-                      placeholder="Search"
-                      aria-label="Search"
-                    />
-                    <button className="btn btn-primary s" type="submit">
-                      Search
-                    </button>
-                  </form>
-                </div>
-              ) : (
-                <></>
-              )}
+              <div className="flex-auto"></div>
 
               <ul
                 className={`navbar-nav ${

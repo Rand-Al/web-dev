@@ -1,8 +1,9 @@
 import Link from "next/link";
 import React from "react";
 import Image from "next/image";
+import { Rating } from "@mui/material";
 
-const Card = ({ course }) => {
+const Card = ({ course, ratingValue, setRatingValue }) => {
   return (
     <div className="card card-width">
       <div className="image-ibg ">
@@ -18,9 +19,12 @@ const Card = ({ course }) => {
       <div className="card-body">
         <h5 className="card-title">{course.title}</h5>
         <p className="card-text overflow">{course.description}</p>
-        <Link href={`/courses/${course.id}`} className="btn btn-primary">
-          Details
-        </Link>
+        <div className="d-flex align-items-center justify-content-between">
+          <Link href={`/courses/${course.id}`} className="btn btn-primary">
+            Details
+          </Link>
+          <Rating name="read-only" value={ratingValue} readOnly />
+        </div>
       </div>
     </div>
   );
