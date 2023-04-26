@@ -1,52 +1,57 @@
 import { useRouter } from "next/router";
 import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions } from "../../lib/session";
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import axios from "axios";
 import Layout from "../Layout";
 import Image from "next/image";
 import s from "../../styles/Home.module.css";
 
-const Course = ({ coursesList, usersList, user }) => {
+const Course = ({ user }) => {
   const router = useRouter();
   const courseId = Number(router.query.id);
-  const course = coursesList?.filter((course) => course.id === courseId)[0];
   const [comment, setComment] = useState("");
-  const [comments, setComments] = useState(course?.comments);
+  const [course, setCourse] = useState([]);
+  const [users, setUsers] = useState([]);
+  const loadCourse = useCallback(() => {
+    axios.get(`/api/courses/${courseId}`).then((res) => setCourse(res.data));
+  }, [courseId]);
+  const loadUsers = useCallback(() => {
+    axios.get(`/api/users`).then((res) => setUsers(res.data));
+  }, []);
+  useEffect(() => {
+    loadUsers();
+    loadCourse();
+  }, [loadCourse, loadUsers]);
 
-  const userId = user.id;
-  const role = user.role;
+  const addCommentRating = async (commentId, courseId, userId, type) => {
+    const rating = {
+      type,
+      commentId,
+      courseId,
+      userId,
+    };
+    try {
+      const ratingResponse = await axios.post("/api/comments/rating", {
+        rating,
+      });
+      loadCourse();
+      console.log(ratingResponse);
+    } catch (errors) {
+      console.log(errors);
+    }
+  };
   const addComment = async () => {
     try {
       const res = await axios.post("/api/comments", {
         comment,
-        userId,
+        userId: user.id,
         courseId,
       });
       setComment("");
-      if (comments.length < 1) {
-        setComments([
-          {
-            id: 1,
-            body: comment,
-            userId: userId,
-            courseId: courseId,
-          },
-        ]);
-      } else {
-        setComments((prev) => [
-          ...prev,
-          {
-            id: prev[prev.length - 1].id++,
-            body: comment,
-            userId: userId,
-            courseId: courseId,
-          },
-        ]);
+      if (res.status === 200) {
+        loadCourse();
       }
-      я;
-
-      console.log(res);
     } catch (errors) {
       console.log(errors);
     }
@@ -59,15 +64,17 @@ const Course = ({ coursesList, usersList, user }) => {
         courseId,
         delete: true,
       });
-      console.log(res);
-      setComments(comments.filter((comment) => comment.id !== id));
+      if (res.status === 200) {
+        loadCourse();
+      }
     } catch (errors) {
       console.log(errors);
     }
   };
+
   return (
     <Layout user={user} title={course?.title} courseTitle={course?.title}>
-      {!coursesList ? (
+      {!course ? (
         <div className={`${s.networkError}`}>
           <span>Network error. Try to reload a page.</span>
         </div>
@@ -81,7 +88,7 @@ const Course = ({ coursesList, usersList, user }) => {
                   src={course.image}
                   alt=""
                   className="float p-3 radius-img"
-                  width="1600"
+                  width="800"
                   height="400"
                 />
               </div>
@@ -90,23 +97,12 @@ const Course = ({ coursesList, usersList, user }) => {
             </div>
           </div>
           <section className="w-100 p-4">
-            {comments?.map((comment) => {
-              const user = usersList.filter(
+            {course?.comments?.map((comment) => {
+              const likes = comment.rating.likes;
+              const dislikes = comment.rating.dislikes;
+              const commentUser = users.find(
                 (user) => user.id === comment.userId
-              )[0];
-              console.log(comment.id);
-              const getFullName = (firstName, lastName) => {
-                if (firstName === "" && lastName === "") {
-                  return user.email;
-                } else if (firstName === "") {
-                  return lastName;
-                } else if (lastName === "") {
-                  return firstName;
-                } else {
-                  return `${firstName} ${lastName}`;
-                }
-              };
-              const fullName = getFullName(user.firstName, user.lastName);
+              );
               return (
                 <div
                   className="row d-flex justify-content-center text-dark"
@@ -116,9 +112,10 @@ const Course = ({ coursesList, usersList, user }) => {
                     <div className="d-flex flex-start mb-4 gap-3">
                       <div className="containerIbg">
                         <div className="image-ibg">
+                          {console.log(commentUser)}
                           <Image
                             className="rounded-circle shadow-1-strong me-3"
-                            src={user.ava}
+                            src={commentUser?.ava}
                             alt="avatar"
                             width="65"
                             height="65"
@@ -128,21 +125,75 @@ const Course = ({ coursesList, usersList, user }) => {
                       <div className="card w-100">
                         <div className="card-body p-4">
                           <div className="">
-                            <h5>{fullName}</h5>
+                            <h5>
+                              {commentUser?.firstName +
+                                " " +
+                                commentUser?.lastName}
+                            </h5>
                             {/* <p className="small">3 hours ago</p> */}
                             <p>{comment.body}</p>
 
                             <div className="d-flex justify-content-between align-items-center">
                               <div className="d-flex align-items-center">
-                                <a href="#!" className="link-muted me-2">
-                                  <i className="fas fa-thumbs-up me-1"></i>132
-                                </a>
-                                <a href="#!" className="link-muted">
-                                  <i className="fas fa-thumbs-down me-1"></i>15
-                                </a>
+                                <div className="text-black me-2 d-flex align-items-center gap-1 fw-bold text-decoration-none">
+                                  <span className="align-self-end">
+                                    {likes?.length}
+                                  </span>
+                                  <svg
+                                    width="30px"
+                                    height="30px"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="cursor-pointer like"
+                                    onClick={() =>
+                                      addCommentRating(
+                                        comment.id,
+                                        course.id,
+                                        user.id,
+                                        "like"
+                                      )
+                                    }
+                                  >
+                                    <path
+                                      d="M8 10V20M8 10L4 9.99998V20L8 20M8 10L13.1956 3.93847C13.6886 3.3633 14.4642 3.11604 15.1992 3.29977L15.2467 3.31166C16.5885 3.64711 17.1929 5.21057 16.4258 6.36135L14 9.99998H18.5604C19.8225 9.99998 20.7691 11.1546 20.5216 12.3922L19.3216 18.3922C19.1346 19.3271 18.3138 20 17.3604 20L8 20"
+                                      stroke="#000000"
+                                      strokeWidth="1.5"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    />
+                                  </svg>
+                                </div>
+                                <div className="text-black me-2 align-self-end d-flex align-items-center pt-7 gap-1 fw-bold text-decoration-none">
+                                  <span className="">{dislikes?.length}</span>
+                                  <svg
+                                    width="30px"
+                                    height="30px"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="align-self-end mt-7 dislike cursor-pointer"
+                                    onClick={() =>
+                                      addCommentRating(
+                                        comment.id,
+                                        course.id,
+                                        user.id,
+                                        "dislike"
+                                      )
+                                    }
+                                  >
+                                    <path
+                                      d="M8 14V4M8 14L4 14V4.00002L8 4M8 14L13.1956 20.0615C13.6886 20.6367 14.4642 20.884 15.1992 20.7002L15.2467 20.6883C16.5885 20.3529 17.1929 18.7894 16.4258 17.6387L14 14H18.5604C19.8225 14 20.7691 12.8454 20.5216 11.6078L19.3216 5.60779C19.1346 4.67294 18.3138 4.00002 17.3604 4.00002L8 4"
+                                      stroke="#000000"
+                                      strokeWidth="1.5"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    />
+                                  </svg>
+                                </div>
                               </div>
-                              {(userId === comment.userId ||
-                                role === "admin") && (
+                              {(user.id === comment.userId ||
+                                user.role === "admin") && (
                                 <button
                                   onClick={() =>
                                     deleteComment(comment.id, courseId, user.id)
@@ -209,10 +260,6 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   res,
 }) {
   const user = req.session.user;
-  const resCourses = await axios.get(`http://127.0.0.1:3000/api/courses`);
-  const coursesList = resCourses.data;
-  const resUsers = await axios.get(`http://127.0.0.1:3000/api/users`);
-  const usersList = resUsers.data;
   if (user === undefined) {
     return {
       redirect: {
@@ -223,7 +270,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   }
 
   return {
-    props: { coursesList, usersList, user: req.session.user },
+    props: { user: req.session.user },
   };
 },
 sessionOptions);

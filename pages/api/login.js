@@ -23,6 +23,8 @@ async function loginRoute(req, res) {
     login: user.email,
     role: dbUser?.role,
     id: dbUser?.id,
+    fullName: dbUser?.firstName + " " + dbUser?.lastName,
+    ava: dbUser.ava,
   };
   req.session.user = sessionUser;
 

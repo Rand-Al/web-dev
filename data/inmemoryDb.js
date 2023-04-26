@@ -120,6 +120,9 @@ if (!data.commentIdKey) {
 if (!data.courseIdKey) {
   data.courseIdKey = 5;
 }
+if (!data.commentRatingIdKey) {
+  data.commentRatingIdKey = 1;
+}
 fs.writeFileSync(filename, JSON.stringify(data));
 
 const db = {
@@ -146,6 +149,7 @@ const db = {
     const data = JSON.parse(fs.readFileSync(filename));
     const newUser = { ...user };
     newUser.id = data.userIdKey++;
+    newUser.ava = "/images/ava.webp";
     data.users.push(newUser);
 
     fs.writeFileSync(filename, JSON.stringify(data));
@@ -186,6 +190,10 @@ const db = {
     comment.id = data.commentIdKey++;
     comment.userId = userId;
     comment.courseId = courseId;
+    comment.rating = {
+      likes: [],
+      dislikes: [],
+    };
     const user = data.users.find((user) => user.id === userId);
     if (!Array.isArray(user.comments)) {
       user.comments = [];
@@ -210,6 +218,33 @@ const db = {
     course.comments = course.comments.filter((comment) => comment.id !== id);
     fs.writeFileSync(filename, JSON.stringify(data));
   },
+  addCommentRating(rating) {
+    const data = JSON.parse(fs.readFileSync(filename));
+    rating.id = data.commentRatingIdKey++;
+    const course = data.courses.find((course) => course.id === rating.courseId);
+    const courseComments = course.comments.find(
+      (comment) => comment.id === rating.commentId
+    );
+
+    if (rating.type === "like") {
+      if (
+        !courseComments.rating.likes.find(
+          (like) => like.userId === rating.userId
+        )
+      ) {
+        courseComments.rating.likes.push(rating);
+      }
+    }
+    if (rating.type === "dislike") {
+      if (
+        !courseComments.rating.dislikes.find(
+          (dislike) => dislike.userId === rating.userId
+        )
+      )
+        courseComments.rating.dislikes.push(rating);
+    }
+    fs.writeFileSync(filename, JSON.stringify(data));
+  },
   addCourse(course, image) {
     const data = JSON.parse(fs.readFileSync(filename));
     const newCourse = { ...course };
@@ -221,6 +256,10 @@ const db = {
   getCourses() {
     const data = fs.readFileSync(filename);
     return JSON.parse(data).courses;
+  },
+  getCourse(id) {
+    const data = fs.readFileSync(filename);
+    return JSON.parse(data).courses.find((x) => x.id === id);
   },
   editCourse(course, image) {
     const data = JSON.parse(fs.readFileSync(filename));

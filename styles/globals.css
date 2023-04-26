@@ -123,3 +123,30 @@ a.active {
 .dropdown-item {
   cursor: pointer;
 }
+.cursor-pointer {
+  cursor: pointer;
+}
+.like {
+  transition: all 0.1s ease-out;
+}
+.like:hover {
+  transform: scale(110%);
+}
+.like:active {
+  transform: scale(100%);
+}
+.dislike {
+  transition: all 0.1s ease-out;
+}
+.dislike:hover {
+  transform: scale(110%);
+}
+.dislike:active {
+  transform: scale(100%);
+}
+.mt-7 {
+  margin-top: 7px;
+}
+.pt-7 {
+  padding-top: 5px;
+}

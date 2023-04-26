@@ -6,6 +6,7 @@ import axios from "axios";
 import s from "../styles/Home.module.css";
 
 export default function Home({ coursesList, user }) {
+  console.log(user);
   return (
     <Layout user={user} title={"Home"}>
       {!coursesList ? (
