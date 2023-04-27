@@ -9,7 +9,6 @@ import Link from "next/link";
 
 export default function Home({ coursesList, user }) {
   const [courses, setCourses] = useState(coursesList);
-  console.log(courses);
   const [searchValue, setSearchValue] = useState("");
   const [categories, setCategories] = useState("");
   const [chosenCategory, setChosenCategory] = useState("Category");
