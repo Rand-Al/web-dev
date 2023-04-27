@@ -4,10 +4,29 @@ import { sessionOptions } from "../lib/session";
 import Layout from "./Layout";
 import axios from "axios";
 import s from "../styles/Home.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function Home({ coursesList, user }) {
+  const [courses, setCourses] = useState(coursesList);
+  console.log(courses);
   const [searchValue, setSearchValue] = useState("");
+  const [categories, setCategories] = useState("");
+  const [chosenCategory, setChosenCategory] = useState("Category");
+  useEffect(() => {
+    axios.get("/api/categories").then((res) => setCategories(res.data));
+  }, []);
+  const filteredByCategory = (category) => {
+    setCourses(coursesList);
+    if (category === "All categories") {
+      setCourses(coursesList);
+    } else {
+      setCourses((prev) =>
+        prev.filter((course) => course.category.includes(category))
+      );
+    }
+    setChosenCategory(category);
+  };
   return (
     <Layout user={user} title={"Home"}>
       {!coursesList ? (
@@ -17,7 +36,7 @@ export default function Home({ coursesList, user }) {
       ) : (
         <div className="container">
           <div className="p-3 bg-body-tertiary rounded-3 my-4 ">
-            <form className="d-flex w-100 mb-5 search">
+            <form className="d-flex w-100 mb-3 search">
               <input
                 className="form-control me-2 w-100 search-input"
                 type="search"
@@ -37,19 +56,44 @@ export default function Home({ coursesList, user }) {
                 </svg>
               </div>
             </form>
+            <div className="d-flex filter gap-2 mb-4 align-items-center">
+              <p className="mb-0 fw-bold fs-5">Filter by:</p>
+              <div className="btn-group ">
+                <button
+                  type="button"
+                  className="btn btn-primary dropdown-toggle"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  {chosenCategory}
+                </button>
+                <ul className="dropdown-menu w-0">
+                  {categories &&
+                    categories.map((cat, idx) => (
+                      <li key={idx} onClick={() => filteredByCategory(cat)}>
+                        <span className="dropdown-item">{cat}</span>
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            </div>
             <h1 className="text-center mb-4">
               From Novice to Pro: Dynamic Web Developer Courses for Every Skill
               Level
             </h1>
 
             <div className="d-flex align-items-center justify-content-center flex-wrap gap-3">
-              {coursesList
-                .filter((course) =>
-                  course.title.toLowerCase().includes(searchValue.toLowerCase())
-                )
-                .map((course) => (
-                  <Card key={course.id} course={course} />
-                ))}
+              {courses.length > 0 ? (
+                courses
+                  .filter((course) =>
+                    course.title
+                      .toLowerCase()
+                      .includes(searchValue.toLowerCase())
+                  )
+                  .map((course) => <Card key={course.id} course={course} />)
+              ) : (
+                <div className={`${s.coursesLess} d-flex`}>No courses</div>
+              )}
             </div>
           </div>
         </div>

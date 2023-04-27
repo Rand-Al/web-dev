@@ -47,7 +47,6 @@ const SignUp = () => {
       } catch (errors) {
         setUniqueEmail(errors.response.data);
       }
-
     }
   };
   return (

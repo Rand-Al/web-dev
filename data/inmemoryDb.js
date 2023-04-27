@@ -324,7 +324,7 @@ const db = {
     const course = data.courses.find((course) => course.id === courseId);
     const ratingArray = course.rating.map((rating) => rating.value);
     if (ratingArray.length > 0) {
-      const rating = Math.round(
+      const rating = Math.floor(
         ratingArray.reduce((a, b) => a + b) / ratingArray.length
       );
       return rating;
