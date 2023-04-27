@@ -120,7 +120,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   res,
 }) {
   const user = req.session.user;
-  const resUsers = await axios.get(`http://localhost:3000/api/users`);
+  const resUsers = await axios.get(`${process.env.API_URL}/api/users`);
   const usersList = resUsers.data;
   if (user === undefined) {
     return {

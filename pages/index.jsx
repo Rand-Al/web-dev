@@ -113,7 +113,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   res,
 }) {
   const user = req.session.user;
-  const resCourse = await axios.get(`http://127.0.0.1:3000/api/courses`);
+  const resCourse = await axios.get(`${process.env.API_URL}/api/courses`);
   const coursesList = resCourse.data;
   if (user === undefined) {
     return {
