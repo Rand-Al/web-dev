@@ -4,21 +4,33 @@ import { sessionOptions } from "../lib/session";
 import Layout from "./Layout";
 import axios from "axios";
 import s from "../styles/Home.module.css";
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import loading from "../public/images/spinner.svg";
+import { useCallback, useEffect, useState } from "react";
+import Image from "next/image";
 
-export default function Home({ coursesList, user }) {
-  const [courses, setCourses] = useState(coursesList);
+export default function Home({ user }) {
+  const [courses, setCourses] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const [categories, setCategories] = useState("");
   const [chosenCategory, setChosenCategory] = useState("Category");
-  useEffect(() => {
-    axios.get("/api/categories").then((res) => setCategories(res.data));
+  const fetchCourses = useCallback(async () => {
+    const coursesResponse = await axios.get(`/api/courses`);
+    setCourses(coursesResponse.data);
   }, []);
-  const filteredByCategory = (category) => {
-    setCourses(coursesList);
+  const fetchCategories = useCallback(async () => {
+    const categoriesResponse = await axios.get("/api/categories");
+    setCategories(categoriesResponse.data);
+  }, []);
+  useEffect(() => {
+    fetchCategories();
+    fetchCourses();
+  }, [fetchCourses, fetchCategories]);
+  const filteredByCategory = async (category) => {
+    const coursesResponse = await axios.get(`/api/courses`); //? Не работает с useCallback. Why?
+    setCourses(coursesResponse.data);
+    console.log(courses);
     if (category === "All categories") {
-      setCourses(coursesList);
+      fetchCourses();
     } else {
       setCourses((prev) =>
         prev.filter((course) => course.category.includes(category))
@@ -28,9 +40,9 @@ export default function Home({ coursesList, user }) {
   };
   return (
     <Layout user={user} title={"Home"}>
-      {!coursesList ? (
-        <div className={`${s.networkError}`}>
-          <span>Network error. Try to reload a page.</span>
+      {courses.length < 1 && chosenCategory === "Category" ? (
+        <div className={`${s.loading}`}>
+          <Image src={loading} width="200" height={200} alt="" />
         </div>
       ) : (
         <div className="container">
@@ -67,12 +79,11 @@ export default function Home({ coursesList, user }) {
                   {chosenCategory}
                 </button>
                 <ul className="dropdown-menu w-0">
-                  {categories &&
-                    categories.map((cat, idx) => (
-                      <li key={idx} onClick={() => filteredByCategory(cat)}>
-                        <span className="dropdown-item">{cat}</span>
-                      </li>
-                    ))}
+                  {categories?.map((cat, idx) => (
+                    <li key={idx} onClick={() => filteredByCategory(cat)}>
+                      <span className="dropdown-item">{cat}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -82,28 +93,20 @@ export default function Home({ coursesList, user }) {
             </h1>
 
             <div className="d-flex align-items-center justify-content-center flex-wrap gap-3">
-              {courses.length > 0 ? (
-                courses
-                  .filter((course) =>
-                    course.title
-                      .toLowerCase()
-                      .includes(searchValue.toLowerCase())
-                  )
-                  .map((course) => <Card key={course.id} course={course} />)
-              ) : (
-                <div className={`${s.coursesLess} d-flex`}>No courses</div>
-              )}
+              {courses
+                ?.filter((course) =>
+                  course.title.toLowerCase().includes(searchValue.toLowerCase())
+                )
+                .map((course) => (
+                  <Card key={course.id} course={course} />
+                ))}
+              {courses?.filter((course) =>
+                course.title.toLowerCase().includes(searchValue.toLowerCase())
+              ).length < 1 && <div className={s.coursesLess}>No courses</div>}
             </div>
           </div>
         </div>
       )}
-
-      {/* <Typography component="legend">Read only</Typography>
-      <Rating name="read-only" value={value} readOnly />
-      <Typography component="legend">Disabled</Typography>
-      <Rating name="disabled" value={value} disabled />
-      <Typography component="legend">No rating given</Typography>
-      <Rating name="no-value" value={null} /> */}
     </Layout>
   );
 }
@@ -113,8 +116,6 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   res,
 }) {
   const user = req.session.user;
-  const resCourse = await axios.get(`${process.env.API_URL}/api/courses`);
-  const coursesList = resCourse.data;
   if (user === undefined) {
     return {
       redirect: {
@@ -125,7 +126,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   }
 
   return {
-    props: { coursesList, user: req.session.user },
+    props: { user: req.session.user },
   };
 },
 sessionOptions);

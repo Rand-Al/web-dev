@@ -15,8 +15,9 @@ const Course = ({ user }) => {
   const [course, setCourse] = useState([]);
   const [users, setUsers] = useState([]);
   const [ratingValue, setRatingValue] = useState(0);
-  const loadCourse = useCallback(() => {
-    axios.get(`/api/courses/${courseId}`).then((res) => setCourse(res.data));
+  const loadCourse = useCallback(async () => {
+    const response = await axios.get(`/api/courses/${courseId}`)
+    setCourse(response.data)
   }, [courseId]);
   const loadUsers = useCallback(() => {
     axios.get(`/api/users`).then((res) => setUsers(res.data));
