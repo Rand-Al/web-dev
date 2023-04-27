@@ -5,7 +5,7 @@ import Layout from "./Layout";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const SignUp = () => {
+const Signup = () => {
   const router = useRouter();
   const [form, setForm] = useState({
     email: "",
