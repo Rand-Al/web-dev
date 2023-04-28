@@ -10,7 +10,6 @@ import axios from "axios";
 const Categories = ({ categoriesList }) => {
   const router = useRouter();
   const [categories, setCategories] = useState(categoriesList.join(", "));
-  const [isBlank, setIsBlank] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const handleCategories = async (e) => {
     e.preventDefault();
@@ -23,10 +22,14 @@ const Categories = ({ categoriesList }) => {
         setTimeout(() => {
           router.push(`/admin/courses`);
         }, 2000);
+        setIsSuccess(false);
       }
     } catch (errors) {
       console.log(errors);
     }
+  };
+  const goBack = () => {
+    router.back();
   };
   return (
     <Layout>
@@ -40,6 +43,12 @@ const Categories = ({ categoriesList }) => {
               Categories successfully changed!
             </div>
           )}
+          <button
+            onClick={() => goBack()}
+            className="btn btn-primary mb-2 align-self-start"
+          >
+            &#8592; Back
+          </button>
           <h2 className="">Add Categories</h2>
           <p className="">Categories is separated by coma and space.</p>
           <div className="form-floating mb-2 d-flex flex-column">

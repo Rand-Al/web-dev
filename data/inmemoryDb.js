@@ -255,16 +255,36 @@ const db = {
         )
       ) {
         courseComments.rating.likes.push(rating);
+        if (
+          !!courseComments.rating.dislikes.find(
+            (dislike) => dislike.userId === rating.userId
+          )
+        ) {
+          courseComments.rating.dislikes =
+            courseComments.rating.dislikes.filter(
+              (dislike) => dislike.userId !== rating.userId
+            );
+        }
       }
-    }
-    if (rating.type === "dislike") {
+    } else if (rating.type === "dislike") {
       if (
         !courseComments.rating.dislikes.find(
           (dislike) => dislike.userId === rating.userId
         )
-      )
+      ) {
         courseComments.rating.dislikes.push(rating);
+        if (
+          !!courseComments.rating.likes.find(
+            (like) => like.userId === rating.userId
+          )
+        ) {
+          courseComments.rating.likes = courseComments.rating.likes.filter(
+            (like) => like.userId !== rating.userId
+          );
+        }
+      }
     }
+
     fs.writeFileSync(filename, JSON.stringify(data));
   },
   addCourse(course, image) {
@@ -305,7 +325,7 @@ const db = {
   addCourseRating(rating, courseId, userId) {
     const data = JSON.parse(fs.readFileSync(filename));
     const course = data.courses.find((course) => course.id === courseId);
-    const courseRating = course.rating;
+    let courseRating = course.rating;
     const ratingInstance = {
       value: rating,
       userId,
@@ -314,6 +334,9 @@ const db = {
       ratingInstance.value !== null &&
       !courseRating.find((rat) => rat.userId === userId)
     ) {
+      courseRating.push(ratingInstance);
+    } else if (courseRating.find((rat) => rat.userId === userId)) {
+      courseRating = courseRating.filter((rat) => rat.userId !== userId);
       courseRating.push(ratingInstance);
     }
 

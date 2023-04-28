@@ -4,8 +4,10 @@ import { useState } from "react";
 import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions } from "../../../lib/session";
 import AdminLayout from "@/layout/AdminLayout";
+import { useRouter } from "next/router";
 
 const UsersTable = ({ usersList, user }) => {
+  const router = useRouter();
   const [users, setUsers] = useState(usersList);
   const [searchValue, setSearchValue] = useState("");
   const changeStatus = (id, isApproved) => {
@@ -24,10 +26,16 @@ const UsersTable = ({ usersList, user }) => {
       .then((res) => console.log(res));
     setUsers((prev) => prev.filter((user) => user.id !== id));
   };
+  const goBack = () => {
+    router.back();
+  };
   return (
     <Layout user={user} title={"Users"}>
       <AdminLayout>
         <div className="table-responsive flex-grow-1 p-3">
+          <button onClick={() => goBack()} className="btn btn-primary mb-2">
+            &#8592; Back
+          </button>
           <div className="d-flex align-items-center gap-3">
             <h2>Users</h2>{" "}
             <form className="d-flex w-100 search">

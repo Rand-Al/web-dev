@@ -1,10 +1,12 @@
 import s from "../styles/Login.module.css";
 import { useState } from "react";
+import { useRouter } from "next/router";
 import axios from "axios";
 import Layout from "./Layout";
 import Link from "next/link";
 
 const Login = () => {
+  const router = useRouter();
   const [error, setError] = useState("");
   const [form, setForm] = useState({
     email: "",
@@ -24,7 +26,7 @@ const Login = () => {
         await axios.post("/api/login", JSON.stringify(form), {
           headers: { "Content-Type": "application/json" },
         });
-        window.location.href = "/";
+        router.push("/");
       } catch (errors) {
         console.log(errors);
         if (errors.response.status === 403) {

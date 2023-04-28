@@ -9,7 +9,7 @@ export default function Header({ user, title, courseTitle }) {
     e.preventDefault();
     const response = await axios.post("/api/logout");
     if (response.status === 200) {
-      window.location.href = "/";
+      router.push("/");
     }
   };
   return (

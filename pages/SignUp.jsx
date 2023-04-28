@@ -15,17 +15,17 @@ const Signup = () => {
     age: "",
     phone: "",
   });
-  const [blank, setBlank] = useState("");
+  const [lack, setLack] = useState("");
   const [uniqueEmail, setUniqueEmail] = useState();
   const [isSuccess, setIsSuccess] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.email && !form.password) {
-      setBlank("noEmailAndPassword");
+      setLack("noEmailAndPassword");
     } else if (!form.password) {
-      setBlank("noPassword");
+      setLack("noPassword");
     } else if (!form.email) {
-      setBlank("noEmail");
+      setLack("noEmail");
     } else {
       try {
         const response = await axios.post("/api/registration", form);
@@ -37,7 +37,7 @@ const Signup = () => {
           age: "",
           phone: "",
         });
-        setBlank("");
+        setLack("");
         if (response.status === 200) {
           setIsSuccess(true);
           setTimeout(() => {
@@ -60,8 +60,8 @@ const Signup = () => {
       <div className={`text-center ${s.formSignin} mb-60 mt-4`}>
         <form className="mt-10" onSubmit={(e) => handleSubmit(e)}>
           <h1 className="h3 mb-4 fw-normal">Sign Up</h1>
-          {(blank === "noEmail" ||
-            blank === "noEmailAndPassword" ||
+          {(lack === "noEmail" ||
+            lack === "noEmailAndPassword" ||
             uniqueEmail) && (
             <span>{uniqueEmail ? uniqueEmail : "Email is required!"}</span>
           )}
@@ -69,8 +69,8 @@ const Signup = () => {
             <input
               type="email"
               className={`form-control ${
-                (blank === "noEmail" ||
-                  blank === "noEmailAndPassword" ||
+                (lack === "noEmail" ||
+                  lack === "noEmailAndPassword" ||
                   uniqueEmail) &&
                 `${s.formError}`
               }`}
@@ -80,20 +80,20 @@ const Signup = () => {
               onChange={(e) =>
                 setForm(
                   (prev) => ({ ...prev, email: e.target.value }),
-                  setBlank("")
+                  setLack("")
                 )
               }
             />
             <label htmlFor="floatingInput">Email address</label>
           </div>
-          {(blank === "noPassword" || blank === "noEmailAndPassword") && (
+          {(lack === "noPassword" || lack === "noEmailAndPassword") && (
             <span>Password is required!</span>
           )}
           <div className="form-floating mb-2">
             <input
               type="password"
               className={`form-control ${
-                (blank === "noPassword" || blank === "noEmailAndPassword") &&
+                (lack === "noPassword" || lack === "noEmailAndPassword") &&
                 `${s.formError}`
               }`}
               value={form.password}
@@ -102,7 +102,7 @@ const Signup = () => {
               onChange={(e) =>
                 setForm(
                   (prev) => ({ ...prev, password: e.target.value }),
-                  setBlank("")
+                  setLack("")
                 )
               }
             />

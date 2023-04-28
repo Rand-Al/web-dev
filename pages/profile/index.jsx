@@ -58,6 +58,7 @@ const Profile = ({ usersList, user }) => {
       filepath: path,
       userId: currentUser.id,
     });
+
     if (responseUser.status === 200) {
       setIsSuccess(true);
       setTimeout(() => {
@@ -66,15 +67,25 @@ const Profile = ({ usersList, user }) => {
     }
     setFileName("");
   };
+  const goBack = () => {
+    router.back();
+  };
+  const cancelEdit = () => {
+    setIsEdit(false);
+  };
   return (
     <Layout user={user} title={"Profile"}>
       {isSuccess && (
         <div className={`${s.success} container`}>Successfully changed!</div>
       )}
+
       {isEdit ? (
         <section
-          className={`w-100 p-4 ${s.bgBorder} container d-flex gap-3 mt-60 flex-column mb-60`}
+          className={`w-100 p-4 ${s.bgBorder} container d-flex gap-3 my-3 flex-column `}
         >
+          <div className="container p-0">
+            <h1 className="text-center mt-1">Edit profile</h1>
+          </div>
           <div className="form-floating mb-2">
             <input
               type="text"
@@ -133,18 +144,25 @@ const Profile = ({ usersList, user }) => {
             />
             <label htmlFor="floatingAge">Age</label>
           </div>
-
-          <button
-            onClick={() => handleEdit()}
-            className="btn btn-success align-self-end"
-          >
-            Save Changes
-          </button>
+          <div className="form-floating mb-2 align-self-end gap-2 d-flex">
+            <button onClick={() => cancelEdit()} className="btn btn-danger">
+              Cancel
+            </button>
+            <button onClick={() => handleEdit()} className="btn btn-success ">
+              Save Changes
+            </button>
+          </div>
         </section>
       ) : (
         <section
-          className={`w-100 p-4 ${s.bgBorder} container d-flex gap-3 mb-60 mt-60 flex-wrap`}
+          className={`w-100 p-4 ${s.bgBorder} container d-flex gap-3 my-3 flex-wrap`}
         >
+          <div className="container p-0">
+            <h1 className="text-center mt-1">Profile</h1>
+            <button onClick={() => goBack()} className="btn btn-primary">
+              <span className={s.arrow}>&#8592;</span> Back
+            </button>
+          </div>
           <div
             className={`card-body text-center card mb-4 flexBasis ${s.flexBasis}`}
           >

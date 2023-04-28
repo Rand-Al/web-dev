@@ -159,10 +159,14 @@ a.active {
   position: relative;
 }
 .search-input {
+  padding-right: 35px !important;
+}
+.search-input::before {
+  display: none;
 }
 .search-img {
   position: absolute;
-  top: 12%;
+  top: 20%;
   right: 1%;
 }
 .filter .btn-group {

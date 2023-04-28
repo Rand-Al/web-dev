@@ -13,7 +13,7 @@ const Layout = ({ children, user, title, courseTitle }) => {
       </Head>
       <section className="d-flex flex-column h-100vh">
         <Header user={user} title={title} courseTitle={courseTitle} />
-        <main className="flex-auto">{children}</main>
+        <main className="flex-auto main">{children}</main>
         <footer className="footer py-3 bg-dark text-white">
           <div className="container fw-bold d-flex justify-content-between">
             <div>Vit Poll</div>
@@ -26,11 +26,3 @@ const Layout = ({ children, user, title, courseTitle }) => {
 };
 
 export default Layout;
-export async function getServerSideProps() {
-  // Fetch data from external API
-  const res = await axios.get(`https://.../data`);
-  const data = await res.json();
-
-  // Pass data to the page via props
-  return { props: { data } };
-}

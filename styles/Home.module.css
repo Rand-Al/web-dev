@@ -1,8 +1,9 @@
 .coursesLess {
   font-size: 48px;
   font-style: italic;
-  padding-top: 8%;
+  padding-top: 2%;
   padding-bottom: 8%;
+  text-align: center;
 }
 .loading {
   display: flex;

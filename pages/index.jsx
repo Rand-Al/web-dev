@@ -11,7 +11,7 @@ import Image from "next/image";
 export default function Home({ user }) {
   const [courses, setCourses] = useState([]);
   const [searchValue, setSearchValue] = useState("");
-  const [categories, setCategories] = useState("");
+  const [categories, setCategories] = useState([]);
   const [chosenCategory, setChosenCategory] = useState("Category");
   const fetchCourses = useCallback(async () => {
     const coursesResponse = await axios.get(`/api/courses`);
@@ -38,6 +38,11 @@ export default function Home({ user }) {
     }
     setChosenCategory(category);
   };
+  const makeUniq = (arr) => {
+    const uniqSet = new Set(arr);
+    return [...uniqSet];
+  };
+  console.log();
   return (
     <Layout user={user} title={"Home"}>
       {courses.length < 1 && chosenCategory === "Category" ? (
@@ -46,7 +51,7 @@ export default function Home({ user }) {
         </div>
       ) : (
         <div className="container">
-          <div className="p-3 bg-body-tertiary rounded-3 my-4 ">
+          <div className="p-5 bg-body-tertiary rounded-3 my-4 ">
             <form className="d-flex w-100 mb-3 search">
               <input
                 className="form-control me-2 w-100 search-input"
@@ -87,23 +92,44 @@ export default function Home({ user }) {
                 </ul>
               </div>
             </div>
-            <h1 className="text-center mb-4">
+            <h1 className="text-center mb-5">
               From Novice to Pro: Dynamic Web Developer Courses for Every Skill
               Level
             </h1>
-
-            <div className="d-flex align-items-center justify-content-center flex-wrap gap-3">
-              {courses
+            <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
+              {makeUniq(
+                courses
+                  ?.filter((course) =>
+                    course.title
+                      .toLowerCase()
+                      .includes(searchValue.toLowerCase())
+                  )
+                  .concat(
+                    courses.filter((course) =>
+                      course.tag
+                        .join()
+                        .toLowerCase()
+                        .includes(searchValue.toLowerCase())
+                    )
+                  )
+              ).map((course) => (
+                <Card key={course.id} course={course} />
+              ))}
+            </div>
+            {makeUniq(
+              courses
                 ?.filter((course) =>
                   course.title.toLowerCase().includes(searchValue.toLowerCase())
                 )
-                .map((course) => (
-                  <Card key={course.id} course={course} />
-                ))}
-              {courses?.filter((course) =>
-                course.title.toLowerCase().includes(searchValue.toLowerCase())
-              ).length < 1 && <div className={s.coursesLess}>No courses</div>}
-            </div>
+                .concat(
+                  courses.filter((course) =>
+                    course.tag
+                      .join()
+                      .toLowerCase()
+                      .includes(searchValue.toLowerCase())
+                  )
+                )
+            ).length < 1 && <div className={s.coursesLess}>No courses</div>}
           </div>
         </div>
       )}

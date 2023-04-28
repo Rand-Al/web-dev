@@ -107,6 +107,9 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
       }
     }
   };
+  const goBack = () => {
+    router.back();
+  };
   return (
     <Layout user={user}>
       <div className="container">
@@ -115,7 +118,13 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
             Course successfully edit!
           </div>
         )}
-        <form className="d-flex flex-column mb-60 mt-60">
+        <button
+          onClick={() => goBack()}
+          className="btn btn-primary mt-3 align-self-start"
+        >
+          &#8592; Back
+        </button>
+        <form className="d-flex flex-column mb-60">
           <h1 className="h3 mb-3 fw-normal text-center mt-4 fw-bold">
             <span>Edit course:</span>{" "}
             <span className="underline">{course.title}</span>

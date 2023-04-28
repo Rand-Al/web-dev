@@ -111,6 +111,9 @@ const AddCourse = ({ categoriesList, user }) => {
       }
     }
   };
+  const goBack = () => {
+    router.back();
+  };
   return (
     <Layout user={user}>
       <div className="container">
@@ -119,8 +122,14 @@ const AddCourse = ({ categoriesList, user }) => {
             Course successfully added!
           </div>
         )}
-        <form className="d-flex flex-column mb-60 mt-60">
-          <h1 className="h3 mb-3 fw-normal text-center mt-4 fw-bold">
+        <button
+          onClick={() => goBack()}
+          className="btn btn-primary mt-3 align-self-start"
+        >
+          &#8592; Back
+        </button>
+        <form className="d-flex flex-column mb-60">
+          <h1 className="h3 mb-3 fw-normal text-center  fw-bold">
             <span>Create course:</span>{" "}
             <span className="underline">{course.title}</span>
           </h1>
@@ -293,7 +302,9 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   res,
 }) {
   const user = req.session.user;
-  const resCategories = await axios.get(`${process.env.API_URL}/api/categories`);
+  const resCategories = await axios.get(
+    `${process.env.API_URL}/api/categories`
+  );
   const categoriesList = resCategories.data;
   if (user === undefined) {
     return {

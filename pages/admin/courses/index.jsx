@@ -6,8 +6,10 @@ import Layout from "@/pages/Layout";
 import AdminLayout from "@/layout/AdminLayout";
 import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions } from "../../../lib/session";
+import { useRouter } from "next/router";
 
 const Courses = ({ coursesList, user }) => {
+  const router = useRouter();
   const [searchValue, setSearchValue] = useState("");
   const [courses, setCourses] = useState(coursesList);
   const deleteCourse = async (courseId) => {
@@ -19,10 +21,16 @@ const Courses = ({ coursesList, user }) => {
       setCourses((prev) => prev.filter((c) => c.id !== courseId));
     }
   };
+  const goBack = () => {
+    router.back();
+  };
   return (
     <Layout user={user} title={"Courses"}>
       <AdminLayout>
         <div className="table-responsive flex-grow-1 p-3">
+          <button onClick={() => goBack()} className="btn btn-primary mb-2">
+            &#8592; Back
+          </button>
           <div className="d-flex align-items-center gap-3">
             <h2 className="d-flex align-items-center flex-grow-1 gap-3">
               <span className="p-0 align-self-start">Courses</span>

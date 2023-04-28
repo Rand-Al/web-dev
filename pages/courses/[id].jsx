@@ -16,8 +16,8 @@ const Course = ({ user }) => {
   const [users, setUsers] = useState([]);
   const [ratingValue, setRatingValue] = useState(0);
   const loadCourse = useCallback(async () => {
-    const response = await axios.get(`/api/courses/${courseId}`)
-    setCourse(response.data)
+    const response = await axios.get(`/api/courses/${courseId}`);
+    setCourse(response.data);
   }, [courseId]);
   const loadUsers = useCallback(() => {
     axios.get(`/api/users`).then((res) => setUsers(res.data));
@@ -88,6 +88,9 @@ const Course = ({ user }) => {
 
     setRatingValue(newValue);
   };
+  const goBack = () => {
+    router.back();
+  };
   return (
     <Layout user={user} title={course?.title} courseTitle={course?.title}>
       {!course ? (
@@ -98,7 +101,16 @@ const Course = ({ user }) => {
         <div className="container mt-10">
           <div className="p-5 mb-4 bg-body-tertiary rounded-3 mt-4">
             <div className="container-fluid">
-              <h1 className="display-5 fw-bold text-center">{course.title}</h1>
+              <button
+                onClick={() => goBack()}
+                className="btn btn-primary back-btn"
+              >
+                &#8592; Back
+              </button>
+              <h1 className="display-5 fw-bold text-center mb-3">
+                {course.title}
+              </h1>
+
               <div className="image-ibg-course-details">
                 <Image
                   src={course.image}
