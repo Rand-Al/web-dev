@@ -9,13 +9,15 @@ import s from "../../../styles/Course.module.css";
 const CourseEdit = ({ coursesList, categoriesList, user }) => {
   const router = useRouter();
   let path = "";
-  const courseId = Number(router.query.id);
+  const courseId = router.query.id;
   const [isSuccess, setIsSuccess] = useState(false);
   const [emptyFieldError, setEmptyFieldError] = useState("");
   const [image, setImage] = useState(null);
   const [createObjectURL, setCreateObjectURL] = useState(null);
   const oneCourse = coursesList.filter((course) => courseId === course.id);
+  console.log(oneCourse);
   const [course, setCourse] = useState(oneCourse[0]);
+
   const [tagValue, setTagValue] = useState(course.tag.join(", "));
   const filteredCategories = categoriesList.filter((category) => {
     return !course.category.includes(category);
@@ -236,13 +238,13 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
                 <ul className="dropdown-menu">
                   {categories.map((category) => {
                     return (
-                      <li key={category}>
+                      <li key={category.id}>
                         <div
                           onClick={(e) => addCategories(e.target.innerHTML)}
                           className="dropdown-item"
                           href="#"
                         >
-                          {category}
+                          {category.title}
                         </div>
                       </li>
                     );

@@ -28,21 +28,20 @@ export default function Home({ user }) {
   const filteredByCategory = async (category) => {
     const coursesResponse = await axios.get(`/api/courses`); //? Не работает с useCallback. Why?
     setCourses(coursesResponse.data);
-    console.log(courses);
-    if (category === "All categories") {
+    if (category.title === "All categories") {
       fetchCourses();
     } else {
       setCourses((prev) =>
-        prev.filter((course) => course.category.includes(category))
+        prev.filter((course) => course.category.includes(category.title))
       );
     }
-    setChosenCategory(category);
+    setChosenCategory(category.title);
   };
   const makeUniq = (arr) => {
     const uniqSet = new Set(arr);
     return [...uniqSet];
   };
-  console.log();
+
   return (
     <Layout user={user} title={"Home"}>
       {courses.length < 1 && chosenCategory === "Category" ? (
@@ -84,9 +83,9 @@ export default function Home({ user }) {
                   {chosenCategory}
                 </button>
                 <ul className="dropdown-menu w-0">
-                  {categories?.map((cat, idx) => (
-                    <li key={idx} onClick={() => filteredByCategory(cat)}>
-                      <span className="dropdown-item">{cat}</span>
+                  {categories?.map((cat) => (
+                    <li key={cat.id} onClick={() => filteredByCategory(cat)}>
+                      <span className="dropdown-item">{cat.title}</span>
                     </li>
                   ))}
                 </ul>

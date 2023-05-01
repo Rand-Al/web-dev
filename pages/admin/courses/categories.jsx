@@ -7,32 +7,41 @@ import { useRouter } from "next/router";
 import s from "../../../styles/Categories.module.css";
 import axios from "axios";
 
-const Categories = ({ categoriesList }) => {
+const Categories = ({ categoriesList, user }) => {
   const router = useRouter();
-  const [categories, setCategories] = useState(categoriesList.join(", "));
+  const [categories, setCategories] = useState(categoriesList);
+  console.log(categories);
+  const [category, setCategory] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const handleCategories = async (e) => {
     e.preventDefault();
     try {
-      const resCategories = await axios.post("/api/categories", {
-        categories: categories,
-      });
-      if (resCategories.status === 200) {
-        setIsSuccess(true);
-        setTimeout(() => {
-          router.push(`/admin/courses`);
-        }, 2000);
-        setIsSuccess(false);
+      if (category.length > 1) {
+        const res = await axios.post(`/api/categories`, { title: category });
+        console.log(category);
+        if (res.status === 200) {
+          const res = await axios.get("/api/categories");
+          setCategories(res.data);
+          setCategory("");
+        }
       }
     } catch (errors) {
       console.log(errors);
     }
   };
+  const deleteCategory = async (categoryId) => {
+    const res = await axios.post("/api/categories", {
+      categoryId,
+      delete: true,
+    });
+    const resCategories = await axios.get("/api/categories");
+    setCategories(resCategories.data);
+  };
   const goBack = () => {
     router.back();
   };
   return (
-    <Layout>
+    <Layout user={user}>
       <AdminLayout>
         <form
           className="px-4 my-4 w-100 d-flex flex-column "
@@ -49,24 +58,42 @@ const Categories = ({ categoriesList }) => {
           >
             &#8592; Back
           </button>
-          <h2 className="">Add Categories</h2>
-          <p className="">Categories is separated by coma and space.</p>
+          <h3>Categories</h3>
+          <div className="d-flex gap-2 border p-3 rounded mb-4">
+            {categories
+              .sort((a, b) => (a.title > b.title ? 1 : -1))
+              .map((category) => (
+                <p
+                  className="border rounded ps-2 shadow d-flex align-items-center gap-2"
+                  key={category.id}
+                >
+                  {category.title}
+                  <span
+                    onClick={() => deleteCategory(category.id)}
+                    className={`${s.delete} btn btn-danger `}
+                  >
+                    X
+                  </span>
+                </p>
+              ))}
+          </div>
+          <h4 className="">Add Category</h4>
           <div className="form-floating mb-2 d-flex flex-column">
             <input
               type="text"
               className="form-control"
               id="floatingFirstName"
-              placeholder="Categories"
-              value={categories}
-              onChange={(e) => setCategories(e.target.value)}
+              placeholder="Add category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
             />
-            <label htmlFor="floatingFirstName">Categories</label>
+            <label htmlFor="floatingFirstName">Add category</label>
           </div>
           <button
             className=" btn btn-lg btn-primary align-self-end"
             type="submit"
           >
-            Confirm changes
+            Add category
           </button>
         </form>
       </AdminLayout>

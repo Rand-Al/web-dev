@@ -1,8 +1,9 @@
-import inmemoryDb from "@/data/inmemoryDb";
+import service from "../../../data/firestore/service";
+import dbFirestore from "../../../data/firestore/firestore.js";
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method === "DELETE") {
-    inmemoryDb.deny(Number(req.query.id));
+    service.deleteUser(dbFirestore, req.query.id);
     return res.status(200).end();
   }
 }

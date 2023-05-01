@@ -1,11 +1,12 @@
-import inmemoryDb from "@/data/inmemoryDb";
+import service from "../../../data/firestore/service";
+import dbFirestore from "../../../data/firestore/firestore.js";
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method === "POST") {
-    const rating = req.body.rating.value;
+    const value = req.body.rating.value;
     const userId = req.body.rating.userId;
     const courseId = req.body.rating.courseId;
-    inmemoryDb.addCourseRating(rating, courseId, userId);
+    await service.addCourseRating(dbFirestore, value, courseId, userId);
     return res.status(200).end();
   }
 }

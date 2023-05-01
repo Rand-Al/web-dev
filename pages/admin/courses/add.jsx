@@ -241,13 +241,13 @@ const AddCourse = ({ categoriesList, user }) => {
                   <ul className="dropdown-menu">
                     {categories.map((category) => {
                       return (
-                        <li key={category}>
+                        <li key={category.id}>
                           <div
                             onClick={(e) => addCategories(e.target.innerHTML)}
                             className="dropdown-item"
                             href="#"
                           >
-                            {category}
+                            {category.title}
                           </div>
                         </li>
                       );

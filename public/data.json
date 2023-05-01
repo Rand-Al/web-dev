@@ -1,1 +1,262 @@
-{"users":[{"id":1,"email":"admin@web-developer.com","password":"123456","firstName":"Admin","lastName":"Admin","phone":"+000000000","age":18,"role":"admin","isApproved":true,"ava":"/admin.png","comments":[{"body":"asdgfrghmtjhj","id":35,"userId":1,"courseId":12,"rating":{"likes":[],"dislikes":[]}},{"body":"dvfebbafbaff","id":36,"userId":1,"courseId":12,"rating":{"likes":[],"dislikes":[]}},{"body":"nice)","id":39,"userId":1,"courseId":3,"rating":{"likes":[],"dislikes":[]}},{"body":"dgthtyrtynthy","id":41,"userId":1,"courseId":1,"rating":{"likes":[],"dislikes":[]}},{"body":"dvgbfnchjm","id":61,"userId":1,"courseId":2,"rating":{"likes":[],"dislikes":[]}}]},{"email":"vpolushkov@gmail.com","password":"123456","firstName":"Vitalii","lastName":"Polushkov","age":"28","phone":"+380502241612","role":"user","isApproved":true,"id":5,"ava":"/photo_2023-04-27_19-18-10.jpg","comments":[{"body":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Aut nisi fugit quidem molestias necessitatibus. Magnam consequatur, totam voluptatem nemo eveniet autem nam praesentium iure labore amet rerum aliquid ad aspernatur.","id":6,"userId":5,"courseId":1},{"body":"Ipsum magnam tatam","id":9,"userId":5,"courseId":1,"rating":[]},{"body":"dsfjgfu","id":25,"userId":5,"courseId":3,"rating":[]},{"body":"fgntgdb","id":37,"userId":5,"courseId":4,"rating":{"likes":[],"dislikes":[]}}]}],"courses":[{"id":1,"title":"JavaScript","description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum","category":["Front end","Server software"],"tag":["#JavaScript","#FrontEnd"],"image":"/1580823783.jpg","rating":[{"value":2,"userId":1}],"comments":[{"body":"dgthtyrtynthy","id":41,"userId":1,"courseId":1,"rating":{"likes":[{"type":"like","commentId":41,"courseId":1,"userId":1,"id":430}],"dislikes":[{"type":"dislike","commentId":41,"courseId":1,"userId":1,"id":431}]}}]},{"id":2,"title":"Python","description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum","category":["Back End"],"tag":["#Python","#BackEnd"],"image":"/python.jfif","comments":[{"body":"dvgbfnchjm","id":61,"userId":1,"courseId":2,"rating":{"likes":[{"type":"like","commentId":61,"courseId":2,"userId":1,"id":684}],"dislikes":[]}}],"rating":[{"value":5,"userId":1},{"value":4,"userId":5}]},{"id":3,"title":"Ruby","description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum","category":["Front end","Back End","Application software"],"tag":["#JavaScript","#BackEnd"],"image":"/ruby-programming-language.png","comments":[{"body":"nice)","id":39,"userId":1,"courseId":3,"rating":{"likes":[{"type":"like","commentId":39,"courseId":3,"userId":1,"id":440}],"dislikes":[{"type":"dislike","commentId":39,"courseId":3,"userId":1,"id":441}]}}],"rating":[{"value":3,"userId":1}]},{"id":4,"title":"C#","description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum","category":["Front end","Back End"],"tag":["#JavaScript","#BackEnd","#C#"],"image":"/c_sharp.png","rating":[{"value":5,"userId":5},{"value":3,"userId":1}],"comments":[{"body":"fgntgdb","id":37,"userId":5,"courseId":4,"rating":{"likes":[{"type":"like","commentId":37,"courseId":4,"userId":5,"id":417}],"dislikes":[{"type":"dislike","commentId":37,"courseId":4,"userId":5,"id":419},{"type":"dislike","commentId":37,"courseId":4,"userId":1,"id":699}]}}]}],"categories":["Front end","Back End","Server software","Application software","System software","All categories"],"userIdKey":7,"commentIdKey":62,"courseIdKey":13,"commentRatingIdKey":700}
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "admin@web-developer.com",
+      "password": "123456",
+      "firstName": "Admin",
+      "lastName": "Admin",
+      "phone": "+000000000",
+      "age": 18,
+      "role": "admin",
+      "isApproved": true,
+      "ava": "/admin.png",
+      "comments": [
+        {
+          "body": "asdgfrghmtjhj",
+          "id": 35,
+          "userId": 1,
+          "courseId": 12,
+          "rating": { "likes": [], "dislikes": [] }
+        },
+        {
+          "body": "dvfebbafbaff",
+          "id": 36,
+          "userId": 1,
+          "courseId": 12,
+          "rating": { "likes": [], "dislikes": [] }
+        },
+        {
+          "body": "nice)",
+          "id": 39,
+          "userId": 1,
+          "courseId": 3,
+          "rating": { "likes": [], "dislikes": [] }
+        },
+        {
+          "body": "dgthtyrtynthy",
+          "id": 41,
+          "userId": 1,
+          "courseId": 1,
+          "rating": { "likes": [], "dislikes": [] }
+        },
+        {
+          "body": "dvgbfnchjm",
+          "id": 61,
+          "userId": 1,
+          "courseId": 2,
+          "rating": { "likes": [], "dislikes": [] }
+        }
+      ]
+    },
+    {
+      "email": "vpolushkov@gmail.com",
+      "password": "123456",
+      "firstName": "Vitalii",
+      "lastName": "Polushkov",
+      "age": "28",
+      "phone": "+380502241612",
+      "role": "user",
+      "isApproved": true,
+      "id": 5,
+      "ava": "/photo_2023-04-27_19-18-10.jpg",
+      "comments": [
+        {
+          "body": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aut nisi fugit quidem molestias necessitatibus. Magnam consequatur, totam voluptatem nemo eveniet autem nam praesentium iure labore amet rerum aliquid ad aspernatur.",
+          "id": 6,
+          "userId": 5,
+          "courseId": 1
+        },
+        {
+          "body": "Ipsum magnam tatam",
+          "id": 9,
+          "userId": 5,
+          "courseId": 1,
+          "rating": []
+        },
+        {
+          "body": "dsfjgfu",
+          "id": 25,
+          "userId": 5,
+          "courseId": 3,
+          "rating": []
+        },
+        {
+          "body": "fgntgdb",
+          "id": 37,
+          "userId": 5,
+          "courseId": 4,
+          "rating": { "likes": [], "dislikes": [] }
+        }
+      ]
+    }
+  ],
+  "courses": [
+    {
+      "id": 1,
+      "title": "JavaScript",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+      "category": ["Front end", "Server software"],
+      "tag": ["#JavaScript", "#FrontEnd"],
+      "image": "/1580823783.jpg",
+      "rating": [{ "value": 2, "userId": 1 }],
+      "comments": [
+        {
+          "body": "dgthtyrtynthy",
+          "id": 41,
+          "userId": 1,
+          "courseId": 1,
+          "rating": {
+            "likes": [
+              {
+                "type": "like",
+                "commentId": 41,
+                "courseId": 1,
+                "userId": 1,
+                "id": 430
+              }
+            ],
+            "dislikes": [
+              {
+                "type": "dislike",
+                "commentId": 41,
+                "courseId": 1,
+                "userId": 1,
+                "id": 431
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Python",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+      "category": ["Back End"],
+      "tag": ["#Python", "#BackEnd"],
+      "image": "/python.jfif",
+      "comments": [
+        {
+          "body": "dvgbfnchjm",
+          "id": 61,
+          "userId": 1,
+          "courseId": 2,
+          "rating": {
+            "likes": [
+              {
+                "type": "like",
+                "commentId": 61,
+                "courseId": 2,
+                "userId": 1,
+                "id": 701
+              }
+            ],
+            "dislikes": []
+          }
+        }
+      ],
+      "rating": [
+        { "value": 5, "userId": 1 },
+        { "value": 4, "userId": 5 }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Ruby",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+      "category": ["Front end", "Back End", "Application software"],
+      "tag": ["#JavaScript", "#BackEnd"],
+      "image": "/ruby-programming-language.png",
+      "comments": [
+        {
+          "body": "nice)",
+          "id": 39,
+          "userId": 1,
+          "courseId": 3,
+          "rating": {
+            "likes": [
+              {
+                "type": "like",
+                "commentId": 39,
+                "courseId": 3,
+                "userId": 1,
+                "id": 440
+              }
+            ],
+            "dislikes": [
+              {
+                "type": "dislike",
+                "commentId": 39,
+                "courseId": 3,
+                "userId": 1,
+                "id": 441
+              }
+            ]
+          }
+        }
+      ],
+      "rating": [{ "value": 3, "userId": 1 }]
+    },
+    {
+      "id": 4,
+      "title": "C#",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+      "category": ["Front end", "Back End"],
+      "tag": ["#JavaScript", "#BackEnd", "#C#"],
+      "image": "/c_sharp.png",
+      "rating": [
+        { "value": 5, "userId": 5 },
+        { "value": 3, "userId": 1 }
+      ],
+      "comments": [
+        {
+          "body": "fgntgdb",
+          "id": 37,
+          "userId": 5,
+          "courseId": 4,
+          "rating": {
+            "likes": [
+              {
+                "type": "like",
+                "commentId": 37,
+                "courseId": 4,
+                "userId": 5,
+                "id": 417
+              }
+            ],
+            "dislikes": [
+              {
+                "type": "dislike",
+                "commentId": 37,
+                "courseId": 4,
+                "userId": 5,
+                "id": 419
+              },
+              {
+                "type": "dislike",
+                "commentId": 37,
+                "courseId": 4,
+                "userId": 1,
+                "id": 699
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "categories": [
+    "Front end",
+    "Back End",
+    "Server software",
+    "Application software",
+    "System software",
+    "GameDev",
+    "All categories"
+  ],
+  "userIdKey": 7,
+  "commentIdKey": 62,
+  "courseIdKey": 13,
+  "commentRatingIdKey": 702
+}

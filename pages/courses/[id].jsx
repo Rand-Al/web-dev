@@ -10,8 +10,10 @@ import { Rating } from "@mui/material";
 
 const Course = ({ user }) => {
   const router = useRouter();
-  const courseId = Number(router.query.id);
-  const [comment, setComment] = useState("");
+  const [error, setError] = useState("");
+  const courseId = router.query.id;
+  const [comment, setComment] = useState();
+  const [isBlank, setIsBlank] = useState(false);
   const [course, setCourse] = useState([]);
   const [users, setUsers] = useState([]);
   const [ratingValue, setRatingValue] = useState(0);
@@ -26,7 +28,6 @@ const Course = ({ user }) => {
     loadUsers();
     loadCourse();
   }, [loadCourse, loadUsers]);
-
   const addCommentRating = async (commentId, courseId, userId, type) => {
     const rating = {
       type,
@@ -34,6 +35,7 @@ const Course = ({ user }) => {
       courseId,
       userId,
     };
+
     try {
       const ratingResponse = await axios.post("/api/comments/rating", {
         rating,
@@ -43,19 +45,27 @@ const Course = ({ user }) => {
       console.log(errors);
     }
   };
-  const addComment = async () => {
-    try {
-      const res = await axios.post("/api/comments", {
-        comment,
-        userId: user.id,
-        courseId,
-      });
-      setComment("");
-      if (res.status === 200) {
-        loadCourse();
+  const addComment = async (e) => {
+    e.preventDefault();
+    if (!comment) {
+      setIsBlank(true);
+      setError("Comment can not be blank!");
+    } else {
+      try {
+        const res = await axios.post("/api/comments", {
+          comment,
+          userId: user.id,
+          courseId,
+        });
+        setComment("");
+        if (res.status === 200) {
+          loadCourse();
+        }
+      } catch (error) {
+        setIsBlank(true);
+        setError("Comment can not be blank!");
+        console.log(error);
       }
-    } catch (errors) {
-      console.log(errors);
     }
   };
   const deleteComment = async (id, courseId, userId) => {
@@ -133,8 +143,8 @@ const Course = ({ user }) => {
           </div>
           <section className="w-100 p-4">
             {course?.comments?.map((comment) => {
-              const likes = comment.rating.likes;
-              const dislikes = comment.rating.dislikes;
+              const likes = comment.rating?.likes;
+              const dislikes = comment.rating?.dislikes;
               const commentUser = users.find(
                 (user) => user.id === comment.userId
               );
@@ -171,7 +181,7 @@ const Course = ({ user }) => {
                               <div className="d-flex align-items-center">
                                 <div className="text-black me-2 d-flex align-items-center gap-1 fw-bold text-decoration-none">
                                   <span className="align-self-end">
-                                    {likes?.length}
+                                    {likes.length}
                                   </span>
                                   <svg
                                     width="30px"
@@ -251,14 +261,19 @@ const Course = ({ user }) => {
             <div className="card-body p-4">
               <div className="d-flex flex-start w-100">
                 <div className="w-100">
-                  <h5>Add a comment</h5>
+                  <h5 className={s.commentTitle}>Add a comment</h5>
+                  {isBlank && <div className={s.errorField}>{error}</div>}
                   <div className="form-outline">
                     <textarea
-                      className="form-control"
+                      className={`form-control ${isBlank && s.error} ${
+                        isBlank && s.focus
+                      }`}
                       id="textAreaExample"
                       rows="4"
                       value={comment}
-                      onChange={(e) => setComment(e.target.value)}
+                      onChange={(e) =>
+                        setComment(e.target.value, setIsBlank(false))
+                      }
                     ></textarea>
                     <label className="form-label" htmlFor="textAreaExample">
                       What is your view?
@@ -273,7 +288,7 @@ const Course = ({ user }) => {
                     <button
                       type="button"
                       className="btn btn-success"
-                      onClick={() => addComment()}
+                      onClick={(e) => addComment(e)}
                     >
                       Send
                     </button>

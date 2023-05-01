@@ -204,10 +204,6 @@ const db = {
     data.categories = categories;
     fs.writeFileSync(filename, JSON.stringify(data));
   },
-  getComments() {
-    const data = JSON.parse(fs.readFileSync(filename));
-    return data.comments;
-  },
   addComment(comment, userId, courseId) {
     const data = JSON.parse(fs.readFileSync(filename));
     comment.id = data.commentIdKey++;

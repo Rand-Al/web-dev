@@ -1,7 +1,10 @@
-import inmemoryDb from "@/data/inmemoryDb";
+import service from "../../../data/firestore/service";
+import dbFirestore from "../../../data/firestore/firestore.js";
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method === "GET") {
-    return res.status(200).json(inmemoryDb.getCourse(parseInt(req.query.id)));
+    return res
+      .status(200)
+      .json(await service.getCourse(dbFirestore, req.query.id));
   }
 }

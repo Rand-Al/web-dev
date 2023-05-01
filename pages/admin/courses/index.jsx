@@ -79,7 +79,7 @@ const Courses = ({ coursesList, user }) => {
                 <th scope="col">Action</th>
               </tr>
             </thead>
-            <tbody className="">
+            <tbody className="h-30">
               {courses
                 .filter((course) =>
                   course.title.toLowerCase().includes(searchValue.toLowerCase())
@@ -93,7 +93,11 @@ const Courses = ({ coursesList, user }) => {
                           {course.title}
                         </Link>
                       </td>
-                      <td>{course.description}</td>
+                      <td>
+                        <span className="overflow h-30">
+                          {course.description}
+                        </span>
+                      </td>
                       <td>
                         {course.category.map((category, idx) => (
                           <div key={idx}>{category}, </div>

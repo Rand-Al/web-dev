@@ -172,3 +172,6 @@ a.active {
 .filter .btn-group {
   flex: 0 0 50px;
 }
+.h-30 {
+  height: 30px !important;
+}

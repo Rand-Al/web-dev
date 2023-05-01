@@ -63,7 +63,9 @@ const Signup = () => {
           {(lack === "noEmail" ||
             lack === "noEmailAndPassword" ||
             uniqueEmail) && (
-            <span>{uniqueEmail ? uniqueEmail : "Email is required!"}</span>
+            <span className={s.errorText}>
+              {uniqueEmail ? uniqueEmail : "Email is required!"}
+            </span>
           )}
           <div className="form-floating mb-2">
             <input
@@ -80,14 +82,15 @@ const Signup = () => {
               onChange={(e) =>
                 setForm(
                   (prev) => ({ ...prev, email: e.target.value }),
-                  setLack("")
+                  setLack(""),
+                  setUniqueEmail("")
                 )
               }
             />
             <label htmlFor="floatingInput">Email address</label>
           </div>
           {(lack === "noPassword" || lack === "noEmailAndPassword") && (
-            <span>Password is required!</span>
+            <span className={s.errorText}>Password is required!</span>
           )}
           <div className="form-floating mb-2">
             <input
@@ -102,7 +105,8 @@ const Signup = () => {
               onChange={(e) =>
                 setForm(
                   (prev) => ({ ...prev, password: e.target.value }),
-                  setLack("")
+                  setLack(""),
+                  setUniqueEmail("")
                 )
               }
             />

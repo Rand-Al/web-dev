@@ -1,12 +1,12 @@
 import { withIronSessionApiRoute } from "iron-session/next";
 import { sessionOptions } from "../../lib/session";
-import inmemoryDb from "@/data/inmemoryDb";
+import service from "../../data/firestore/service.js";
+import dbFirestore from "../../data/firestore/firestore.js";
 
 async function loginRoute(req, res) {
   const user = await req.body;
-  const dbUser = inmemoryDb
-    .getUsers()
-    .find((dbUser) => dbUser.email === user.email);
+  const dbUsers = await service.getUsers(dbFirestore);
+  const dbUser = dbUsers.find((dbUser) => dbUser.email === user.email);
   if (
     !dbUser ||
     !user ||
