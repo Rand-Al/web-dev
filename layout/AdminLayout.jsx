@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 const AdminLayout = ({ children }) => {
   const router = useRouter();
   return (
-    <div className="container-fluid d-flex">
+    <div className="container d-flex">
       <nav
         id="sidebarMenu"
         className="col-md-3 col-lg-2 d-md-block bg-body-tertiary sidebar collapse h-100vh"

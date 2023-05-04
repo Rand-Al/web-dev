@@ -60,6 +60,7 @@ const data = {
       phone: user.phone,
       role: "user",
       isApproved: false,
+      ava: "/images/ava.webp",
     };
     try {
       addDoc(usersRef, data);

@@ -7,6 +7,7 @@ import Layout from "../Layout";
 import Image from "next/image";
 import s from "../../styles/Home.module.css";
 import { Rating } from "@mui/material";
+import { Button, Comment, Form, Header } from "semantic-ui-react";
 
 const Course = ({ user }) => {
   const router = useRouter();
@@ -141,161 +142,117 @@ const Course = ({ user }) => {
               />
             </div>
           </div>
-          <section className="w-100 p-4">
-            {course?.comments?.map((comment) => {
-              const likes = comment.rating?.likes;
-              const dislikes = comment.rating?.dislikes;
-              const commentUser = users.find(
-                (user) => user.id === comment.userId
-              );
-              return (
-                <div
-                  className="row d-flex justify-content-center text-dark"
-                  key={comment.id}
-                >
-                  <div className="col-md-11 col-lg-9 col-xl-7">
-                    <div className="d-flex flex-start mb-4 gap-3">
-                      <div className="containerIbg">
-                        <div className="image-ibg">
-                          <Image
-                            className="rounded-circle shadow-1-strong me-3"
-                            src={commentUser?.ava}
-                            alt="avatar"
-                            width="65"
-                            height="65"
-                          />
-                        </div>
-                      </div>
-                      <div className="card w-100">
-                        <div className="card-body p-4">
-                          <div className="">
-                            <h5>
-                              {commentUser?.firstName +
-                                " " +
-                                commentUser?.lastName}
-                            </h5>
-                            {/* <p className="small">3 hours ago</p> */}
-                            <p>{comment.body}</p>
-
-                            <div className="d-flex justify-content-between align-items-center">
-                              <div className="d-flex align-items-center">
-                                <div className="text-black me-2 d-flex align-items-center gap-1 fw-bold text-decoration-none">
-                                  <span className="align-self-end">
-                                    {likes.length}
-                                  </span>
-                                  <svg
-                                    width="30px"
-                                    height="30px"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="cursor-pointer like"
-                                    onClick={() =>
-                                      addCommentRating(
-                                        comment.id,
-                                        course.id,
-                                        user.id,
-                                        "like"
-                                      )
-                                    }
-                                  >
-                                    <path
-                                      d="M8 10V20M8 10L4 9.99998V20L8 20M8 10L13.1956 3.93847C13.6886 3.3633 14.4642 3.11604 15.1992 3.29977L15.2467 3.31166C16.5885 3.64711 17.1929 5.21057 16.4258 6.36135L14 9.99998H18.5604C19.8225 9.99998 20.7691 11.1546 20.5216 12.3922L19.3216 18.3922C19.1346 19.3271 18.3138 20 17.3604 20L8 20"
-                                      stroke="#000000"
-                                      strokeWidth="1.5"
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                    />
-                                  </svg>
-                                </div>
-                                <div className="text-black me-2 align-self-end d-flex align-items-center pt-7 gap-1 fw-bold text-decoration-none">
-                                  <span className="">{dislikes?.length}</span>
-                                  <svg
-                                    width="30px"
-                                    height="30px"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="align-self-end mt-7 dislike cursor-pointer"
-                                    onClick={() =>
-                                      addCommentRating(
-                                        comment.id,
-                                        course.id,
-                                        user.id,
-                                        "dislike"
-                                      )
-                                    }
-                                  >
-                                    <path
-                                      d="M8 14V4M8 14L4 14V4.00002L8 4M8 14L13.1956 20.0615C13.6886 20.6367 14.4642 20.884 15.1992 20.7002L15.2467 20.6883C16.5885 20.3529 17.1929 18.7894 16.4258 17.6387L14 14H18.5604C19.8225 14 20.7691 12.8454 20.5216 11.6078L19.3216 5.60779C19.1346 4.67294 18.3138 4.00002 17.3604 4.00002L8 4"
-                                      stroke="#000000"
-                                      strokeWidth="1.5"
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                    />
-                                  </svg>
-                                </div>
-                              </div>
-                              {(user.id === comment.userId ||
-                                user.role === "admin") && (
-                                <button
-                                  onClick={() =>
-                                    deleteComment(comment.id, courseId, user.id)
-                                  }
-                                  href="#!"
-                                  className="link-muted btn btn-danger"
-                                >
-                                  Delete
-                                </button>
-                              )}
-                            </div>
+          <section className="d-flex ">
+            <Comment.Group className="w-100 mt-4">
+              <Header as="h3" dividing>
+                Comments
+              </Header>
+              {course?.comments?.map((comment) => {
+                const likes = comment.rating?.likes;
+                const dislikes = comment.rating?.dislikes;
+                const commentUser = users.find(
+                  (user) => user.id === comment.userId
+                );
+                return (
+                  <Comment key={comment.id} className={s.comment}>
+                    <Comment.Avatar src={commentUser?.ava} />
+                    <Comment.Content>
+                      <Comment.Author as="a">
+                        {commentUser?.firstName}
+                      </Comment.Author>
+                      <Comment.Metadata>
+                        <div>Today at 5:42PM</div>
+                        {(user.id === comment.userId ||
+                          user.role === "admin") && (
+                          <div
+                            onClick={() =>
+                              deleteComment(comment.id, courseId, user.id)
+                            }
+                            className={s.deleteComment}
+                          >
+                            <img
+                              src="/images/tech/deleteComment.svg"
+                              alt=""
+                              width={22}
+                            />
                           </div>
+                        )}
+                      </Comment.Metadata>
+                      <Comment.Text>{comment.body}</Comment.Text>
+                      <Comment.Actions className="d-flex justify-content-end align-items-center fw-bold">
+                        <div className="d-flex align-items-center ">
+                          <span className="">{likes.length}</span>
+                          <svg
+                            width="30px"
+                            height="30px"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="cursor-pointer like mt-o"
+                            onClick={() =>
+                              addCommentRating(
+                                comment.id,
+                                course.id,
+                                user.id,
+                                "like"
+                              )
+                            }
+                          >
+                            <path
+                              d="M8 10V20M8 10L4 9.99998V20L8 20M8 10L13.1956 3.93847C13.6886 3.3633 14.4642 3.11604 15.1992 3.29977L15.2467 3.31166C16.5885 3.64711 17.1929 5.21057 16.4258 6.36135L14 9.99998H18.5604C19.8225 9.99998 20.7691 11.1546 20.5216 12.3922L19.3216 18.3922C19.1346 19.3271 18.3138 20 17.3604 20L8 20"
+                              stroke="#000000"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-
-            <div className="card-body p-4">
-              <div className="d-flex flex-start w-100">
-                <div className="w-100">
-                  <h5 className={s.commentTitle}>Add a comment</h5>
-                  {isBlank && <div className={s.errorField}>{error}</div>}
-                  <div className="form-outline">
-                    <textarea
-                      className={`form-control ${isBlank && s.error} ${
-                        isBlank && s.focus
-                      }`}
-                      id="textAreaExample"
-                      rows="4"
-                      value={comment}
-                      onChange={(e) =>
-                        setComment(e.target.value, setIsBlank(false))
-                      }
-                    ></textarea>
-                    <label className="form-label" htmlFor="textAreaExample">
-                      What is your view?
-                    </label>
-                    <div className="form-notch">
-                      <div className="form-notch-leading"></div>
-                      <div className="form-notch-middle"></div>
-                      <div className="form-notch-trailing"></div>
-                    </div>
-                  </div>
-                  <div className="d-flex mt-3 flex-row-reverse">
-                    <button
-                      type="button"
-                      className="btn btn-success"
-                      onClick={(e) => addComment(e)}
-                    >
-                      Send
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+                        <div className="d-flex align-items-center">
+                          <span className="">{dislikes?.length}</span>
+                          <svg
+                            width="30px"
+                            height="30px"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="align-self-end dislike cursor-pointer"
+                            onClick={() =>
+                              addCommentRating(
+                                comment.id,
+                                course.id,
+                                user.id,
+                                "dislike"
+                              )
+                            }
+                          >
+                            <path
+                              d="M8 14V4M8 14L4 14V4.00002L8 4M8 14L13.1956 20.0615C13.6886 20.6367 14.4642 20.884 15.1992 20.7002L15.2467 20.6883C16.5885 20.3529 17.1929 18.7894 16.4258 17.6387L14 14H18.5604C19.8225 14 20.7691 12.8454 20.5216 11.6078L19.3216 5.60779C19.1346 4.67294 18.3138 4.00002 17.3604 4.00002L8 4"
+                              stroke="#000000"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                      </Comment.Actions>
+                    </Comment.Content>
+                  </Comment>
+                );
+              })}
+              <Form reply>
+                <Form.TextArea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                />
+                <Button
+                  content="Add Reply"
+                  labelPosition="left"
+                  icon="edit"
+                  primary
+                  onClick={(e) => addComment(e)}
+                />
+              </Form>
+            </Comment.Group>
           </section>
         </div>
       )}

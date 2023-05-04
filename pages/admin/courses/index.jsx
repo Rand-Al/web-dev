@@ -7,6 +7,7 @@ import AdminLayout from "@/layout/AdminLayout";
 import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions } from "../../../lib/session";
 import { useRouter } from "next/router";
+import s from "../../../styles/Table.module.css";
 
 const Courses = ({ coursesList, user }) => {
   const router = useRouter();
@@ -66,20 +67,18 @@ const Courses = ({ coursesList, user }) => {
               </Link>
             </span>
           </div>
-
-          <table className="table table-striped table-sm ">
+          <table class={`${s.respTab}`}>
             <thead>
               <tr>
-                <th scope="col">Course Id</th>
-                <th scope="col">Title</th>
-                <th scope="col">Description</th>
-                <th scope="col">Category</th>
-                <th scope="col">Tag</th>
-                <th scope="col">Image</th>
-                <th scope="col">Action</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Tag</th>
+                <th>Image</th>
+                <th>Act.</th>
               </tr>
             </thead>
-            <tbody className="h-30">
+            <tbody>
               {courses
                 .filter((course) =>
                   course.title.toLowerCase().includes(searchValue.toLowerCase())
@@ -87,16 +86,13 @@ const Courses = ({ coursesList, user }) => {
                 .map((course) => {
                   return (
                     <tr key={course.id}>
-                      <td>{course.id}</td>
                       <td>
                         <Link href={`/courses/${course.id}`}>
                           {course.title}
                         </Link>
                       </td>
                       <td>
-                        <span className="overflow h-30">
-                          {course.description}
-                        </span>
+                        <div className={s.height}>{course.description}</div>
                       </td>
                       <td>
                         {course.category.map((category, idx) => (
@@ -113,20 +109,22 @@ const Courses = ({ coursesList, user }) => {
                           <img src={course.image} alt="" />
                         </div>
                       </td>
-                      <td className="d-flex flex-column gap-3 p-2">
-                        <Link
-                          href={`/admin/courses/${course.id}`}
-                          className="btn btn-warning "
-                        >
-                          Edit
-                        </Link>
-                        <button
-                          onClick={() => deleteCourse(course.id)}
-                          href={`/admin/courses/${course.id}`}
-                          className="btn btn-danger "
-                        >
-                          Delete
-                        </button>
+                      <td>
+                        <div className={s.actions}>
+                          <Link
+                            href={`/admin/courses/${course.id}`}
+                            className={s.pic}
+                          >
+                            <img src="/images/tech/edit.svg" alt="" />
+                          </Link>
+                          <div
+                            onClick={() => deleteCourse(course.id)}
+                            href={`/admin/courses/${course.id}`}
+                            className={s.pic}
+                          >
+                            <img src="/images/tech/delete.svg" alt="" />
+                          </div>
+                        </div>
                       </td>
                     </tr>
                   );

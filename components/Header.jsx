@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import axios from "axios";
+import s from "../styles/Header.module.css";
 
 export default function Header({ user, title, courseTitle }) {
   const router = useRouter();
@@ -13,7 +14,7 @@ export default function Header({ user, title, courseTitle }) {
     }
   };
   return (
-    <header className="p-3 bg-dark text-white fw-bold">
+    <header className={`p-3 bg-dark text-white fw-bold ${s.header}`}>
       <div className="container">
         <nav className="navbar navbar-expand-lg navbar-light radius bg-light">
           <div className="container-fluid">

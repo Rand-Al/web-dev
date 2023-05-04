@@ -5,6 +5,7 @@ import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions } from "../../../lib/session";
 import AdminLayout from "@/layout/AdminLayout";
 import { useRouter } from "next/router";
+import s from "../../../styles/Table.module.css";
 
 const UsersTable = ({ usersList, user }) => {
   const router = useRouter();
@@ -32,13 +33,13 @@ const UsersTable = ({ usersList, user }) => {
   return (
     <Layout user={user} title={"Users"}>
       <AdminLayout>
-        <div className="table-responsive flex-grow-1 p-3">
+        <div className="container py-4">
           <button onClick={() => goBack()} className="btn btn-primary mb-2">
             &#8592; Back
           </button>
-          <div className="d-flex align-items-center gap-3">
+          <div className="">
             <h2>Users</h2>{" "}
-            <form className="d-flex w-100 search">
+            <form className="d-flex w-100 search mb-3">
               <input
                 className="form-control me-2 w-100 search-input"
                 type="search"
@@ -59,19 +60,17 @@ const UsersTable = ({ usersList, user }) => {
               </div>
             </form>
           </div>
-
-          <table className="table table-striped table-sm">
+          <table class={`${s.respTab}`}>
             <thead>
               <tr>
-                <th scope="col">User Id</th>
-                <th scope="col">Email</th>
-                <th scope="col">First Name</th>
-                <th scope="col">Last Name</th>
-                <th scope="col">Age</th>
-                <th scope="col">Phone</th>
-                <th scope="col">isApproved</th>
-                <th scope="col">Role</th>
-                <th scope="col"></th>
+                <th>Email</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Age</th>
+                <th>Phone</th>
+                <th>isApproved</th>
+                <th>Role</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -84,30 +83,39 @@ const UsersTable = ({ usersList, user }) => {
                 .map((user) => {
                   return (
                     <tr key={user.id}>
-                      <td>{user.id}</td>
                       <td>{user.email}</td>
                       <td>{user.firstName}</td>
                       <td>{user.lastName}</td>
                       <td>{user.age}</td>
-                      <td>{user.phone}</td>
                       <td>
-                        <button
+                        <div className={s.height}>{user.phone}</div>
+                      </td>
+                      <td>
+                        <div
                           onClick={() => changeStatus(user.id, user.isApproved)}
                           disabled={user.isApproved}
-                          className="btn btn-warning"
+                          className={`${!user.isApproved && s.pic} text-center`}
                         >
-                          {user.isApproved ? "true" : "false"}
-                        </button>
+                          {user.isApproved ? (
+                            "Approved"
+                          ) : (
+                            <img
+                              src="/images/tech/edit.svg"
+                              alt=""
+                              className="text-center"
+                            />
+                          )}
+                        </div>
                       </td>
                       <td>{user.role}</td>
                       <td>
                         {!user.isApproved && (
-                          <button
+                          <div
                             onClick={() => deleteUser(user.id)}
-                            className="btn btn-danger"
+                            className={s.pic}
                           >
-                            Delete
-                          </button>
+                            <img src="/images/tech/delete.svg" alt="" />
+                          </div>
                         )}
                       </td>
                     </tr>

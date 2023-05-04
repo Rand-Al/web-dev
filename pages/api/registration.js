@@ -13,7 +13,6 @@ async function handler(req, res) {
     } else {
       user.role = "user";
       user.isApproved = false;
-      user.ava = "/images/ava.webp";
       await service.addUser(dbFirestore, user);
       res.status(200).end();
     }

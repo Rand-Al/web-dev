@@ -1,4 +1,5 @@
 /* @import url("https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&display=swap"); */
+
 body {
   font-family: "Roboto" !important;
 }
@@ -133,6 +134,7 @@ a.active {
 }
 .like {
   transition: all 0.1s ease-out;
+  padding-bottom: 5px;
 }
 .like:hover {
   transform: scale(110%);
@@ -142,6 +144,9 @@ a.active {
 }
 .dislike {
   transition: all 0.1s ease-out;
+  padding-top: 5px;
+  margin-top: 5px;
+  margin-bottom: 8px;
 }
 .dislike:hover {
   transform: scale(110%);
@@ -174,4 +179,31 @@ a.active {
 }
 .h-30 {
   height: 30px !important;
+}
+.main {
+  padding-top: 88px;
+  padding-bottom: 56px;
+  overflow: overlay;
+}
+.main::-webkit-scrollbar {
+  width: 12px; /* ширина всей полосы прокрутки */
+  position: relative;
+  z-index: -1;
+}
+
+.main::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.main::-webkit-scrollbar-thumb {
+  background-color: #212529; /* цвет бегунка */
+  border-radius: 20px;
+  height: 40px; /* округлось бегунка */
+}
+.footer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  z-index: 5;
 }
