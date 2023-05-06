@@ -6,6 +6,8 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import s from "../../../styles/Categories.module.css";
 import axios from "axios";
+import firestoreDb from "../../../data/firestore/firestore";
+import f from "../../../data/firestore/service";
 
 const Categories = ({ categoriesList, user }) => {
   const router = useRouter();
@@ -64,7 +66,7 @@ const Categories = ({ categoriesList, user }) => {
               .sort((a, b) => (a.title > b.title ? 1 : -1))
               .map((category) => (
                 <p
-                  className="border rounded ps-2 shadow d-flex align-items-center gap-2"
+                  className="category border rounded ps-2 shadow d-flex align-items-center gap-2"
                   key={category.id}
                 >
                   {category.title}
@@ -108,10 +110,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   res,
 }) {
   const user = req.session.user;
-  const resCategories = await axios.get(
-    `${process.env.API_URL}/api/categories`
-  );
-  const categoriesList = resCategories.data;
+  const resCategories = await f.getCategories(firestoreDb);
   if (user === undefined) {
     return {
       redirect: {
@@ -122,7 +121,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   }
 
   return {
-    props: { categoriesList, user: req.session.user },
+    props: { categoriesList: resCategories, user: req.session.user },
   };
 },
 sessionOptions);

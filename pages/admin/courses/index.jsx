@@ -8,6 +8,8 @@ import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions } from "../../../lib/session";
 import { useRouter } from "next/router";
 import s from "../../../styles/Table.module.css";
+import firestoreDb from "../../../data/firestore/firestore";
+import f from "../../../data/firestore/service";
 
 const Courses = ({ coursesList, user }) => {
   const router = useRouter();
@@ -25,6 +27,13 @@ const Courses = ({ coursesList, user }) => {
   const goBack = () => {
     router.back();
   };
+  const returnCategories = async (courseId) => {
+    const res = await axios.get(`/api/categories/${courseId}`);
+    const categories = res.data;
+    return categories;
+  };
+
+  console.log(courses);
   return (
     <Layout user={user} title={"Courses"}>
       <AdminLayout>
@@ -67,7 +76,7 @@ const Courses = ({ coursesList, user }) => {
               </Link>
             </span>
           </div>
-          <table class={`${s.respTab}`}>
+          <table className={`${s.respTab}`}>
             <thead>
               <tr>
                 <th>Title</th>
@@ -79,7 +88,7 @@ const Courses = ({ coursesList, user }) => {
               </tr>
             </thead>
             <tbody>
-              {courses
+              {coursesList
                 .filter((course) =>
                   course.title.toLowerCase().includes(searchValue.toLowerCase())
                 )
@@ -95,12 +104,14 @@ const Courses = ({ coursesList, user }) => {
                         <div className={s.height}>{course.description}</div>
                       </td>
                       <td>
-                        {course.category.map((category, idx) => (
-                          <div key={idx}>{category}, </div>
-                        ))}
+                        {course.categories.map((category) => {
+                          return (
+                            <div key={category.id}>{category.title}, </div>
+                          );
+                        })}
                       </td>
                       <td>
-                        {course.tag.map((tag, idx) => (
+                        {course.tags.map((tag, idx) => (
                           <div key={idx}>{tag}, </div>
                         ))}
                       </td>
@@ -144,8 +155,8 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   res,
 }) {
   const user = req.session.user;
-  const resCourses = await axios.get(`${process.env.API_URL}/api/courses`);
-  const coursesList = resCourses.data;
+  const resCourses = await f.getCoursesWithCategories(firestoreDb);
+
   if (user === undefined) {
     return {
       props: {},
@@ -153,7 +164,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   }
 
   return {
-    props: { user: req.session.user, coursesList },
+    props: { user: req.session.user, coursesList: resCourses },
   };
 },
 sessionOptions);

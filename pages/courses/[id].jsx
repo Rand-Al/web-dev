@@ -8,27 +8,21 @@ import Image from "next/image";
 import s from "../../styles/Home.module.css";
 import { Rating } from "@mui/material";
 import { Button, Comment, Form, Header } from "semantic-ui-react";
+import f from "../../data/firestore/service";
+import firestoreDb from "../../data/firestore/firestore";
 
-const Course = ({ user }) => {
+const Course = ({ user, dbCourse, dbComments, users }) => {
   const router = useRouter();
-  const [error, setError] = useState("");
   const courseId = router.query.id;
+  const [comments, setComments] = useState(dbComments);
+  const [error, setError] = useState("");
   const [comment, setComment] = useState();
   const [isBlank, setIsBlank] = useState(false);
-  const [course, setCourse] = useState([]);
-  const [users, setUsers] = useState([]);
   const [ratingValue, setRatingValue] = useState(0);
-  const loadCourse = useCallback(async () => {
-    const response = await axios.get(`/api/courses/${courseId}`);
-    setCourse(response.data);
+  const loadComments = useCallback(async () => {
+    const response = await axios.get(`/api/comments/${courseId}`);
+    setComments(response.data);
   }, [courseId]);
-  const loadUsers = useCallback(() => {
-    axios.get(`/api/users`).then((res) => setUsers(res.data));
-  }, []);
-  useEffect(() => {
-    loadUsers();
-    loadCourse();
-  }, [loadCourse, loadUsers]);
   const addCommentRating = async (commentId, courseId, userId, type) => {
     const rating = {
       type,
@@ -41,7 +35,7 @@ const Course = ({ user }) => {
       const ratingResponse = await axios.post("/api/comments/rating", {
         rating,
       });
-      loadCourse();
+      loadComments()();
     } catch (errors) {
       console.log(errors);
     }
@@ -60,7 +54,7 @@ const Course = ({ user }) => {
         });
         setComment("");
         if (res.status === 200) {
-          loadCourse();
+          loadComments();
         }
       } catch (error) {
         setIsBlank(true);
@@ -78,7 +72,7 @@ const Course = ({ user }) => {
         delete: true,
       });
       if (res.status === 200) {
-        loadCourse();
+        loadComments();
       }
     } catch (errors) {
       console.log(errors);
@@ -103,8 +97,8 @@ const Course = ({ user }) => {
     router.back();
   };
   return (
-    <Layout user={user} title={course?.title} courseTitle={course?.title}>
-      {!course ? (
+    <Layout user={user} title={dbCourse?.title} courseTitle={dbCourse?.title}>
+      {!dbCourse ? (
         <div className={`${s.networkError}`}>
           <span>Network error. Try to reload a page.</span>
         </div>
@@ -119,12 +113,12 @@ const Course = ({ user }) => {
                 &#8592; Back
               </button>
               <h1 className="display-5 fw-bold text-center mb-3">
-                {course.title}
+                {dbCourse.title}
               </h1>
 
               <div className="image-ibg-course-details">
                 <Image
-                  src={course.image}
+                  src={dbCourse.image}
                   alt=""
                   className="float p-3 radius-img"
                   width="800"
@@ -132,7 +126,7 @@ const Course = ({ user }) => {
                 />
               </div>
 
-              <p className="fs-4 px-3">{course.description}</p>
+              <p className="fs-4 px-3">{dbCourse.description}</p>
               <Rating
                 name="simple-controlled"
                 value={ratingValue}
@@ -147,9 +141,7 @@ const Course = ({ user }) => {
               <Header as="h3" dividing>
                 Comments
               </Header>
-              {course?.comments?.map((comment) => {
-                const likes = comment.rating?.likes;
-                const dislikes = comment.rating?.dislikes;
+              {comments?.map((comment) => {
                 const commentUser = users.find(
                   (user) => user.id === comment.userId
                 );
@@ -181,7 +173,7 @@ const Course = ({ user }) => {
                       <Comment.Text>{comment.body}</Comment.Text>
                       <Comment.Actions className="d-flex justify-content-end align-items-center fw-bold">
                         <div className="d-flex align-items-center ">
-                          <span className="">{likes.length}</span>
+                          <span className="">{comment.likes?.length}</span>
                           <svg
                             width="30px"
                             height="30px"
@@ -192,7 +184,7 @@ const Course = ({ user }) => {
                             onClick={() =>
                               addCommentRating(
                                 comment.id,
-                                course.id,
+                                dbCourse.id,
                                 user.id,
                                 "like"
                               )
@@ -208,7 +200,7 @@ const Course = ({ user }) => {
                           </svg>
                         </div>
                         <div className="d-flex align-items-center">
-                          <span className="">{dislikes?.length}</span>
+                          <span className="">{comment.dislikes?.length}</span>
                           <svg
                             width="30px"
                             height="30px"
@@ -219,7 +211,7 @@ const Course = ({ user }) => {
                             onClick={() =>
                               addCommentRating(
                                 comment.id,
-                                course.id,
+                                dbCourse.id,
                                 user.id,
                                 "dislike"
                               )
@@ -240,9 +232,11 @@ const Course = ({ user }) => {
                 );
               })}
               <Form reply>
+                {isBlank && <div className={s.errorField}>{error}</div>}
                 <Form.TextArea
                   value={comment}
-                  onChange={(e) => setComment(e.target.value)}
+                  onChange={(e) => setComment(e.target.value, setIsBlank(""))}
+                  className={isBlank && s.error}
                 />
                 <Button
                   content="Add Reply"
@@ -264,8 +258,14 @@ export default Course;
 export const getServerSideProps = withIronSessionSsr(async function ({
   req,
   res,
+  query,
 }) {
   const user = req.session.user;
+  const courseId = query.id;
+  const courses = await f.getCourses(firestoreDb);
+  const dbCourse = courses.find((c) => c.id === courseId);
+  const dbComments = await f.getCourseComments(firestoreDb, courseId);
+  const users = await f.getUsers(firestoreDb);
   if (user === undefined) {
     return {
       redirect: {
@@ -276,7 +276,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   }
 
   return {
-    props: { user: req.session.user },
+    props: { user: req.session.user, dbCourse, dbComments, users },
   };
 },
 sessionOptions);

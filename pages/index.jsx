@@ -1,4 +1,6 @@
 import Card from "@/components/Card";
+import firestoreDb from "../data/firestore/firestore";
+import service from "../data/firestore/service";
 import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions } from "../lib/session";
 import Layout from "./Layout";
@@ -8,10 +10,11 @@ import loading from "../public/images/spinner.svg";
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 
-export default function Home({ user }) {
+export default function Home({ user, dbCategories, dbCourses }) {
   const [courses, setCourses] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(dbCategories);
   const [chosenCategory, setChosenCategory] = useState("Category");
   const fetchCourses = useCallback(async () => {
     const coursesResponse = await axios.get(`/api/courses`);
@@ -26,22 +29,31 @@ export default function Home({ user }) {
     fetchCourses();
   }, [fetchCourses, fetchCategories]);
   const filteredByCategory = async (category) => {
-    const coursesResponse = await axios.get(`/api/courses`); //? Не работает с useCallback. Why?
+    setIsLoading(true);
+    const coursesResponse = await axios.get(`/api/courses`);
     setCourses(coursesResponse.data);
-    if (category.title === "All categories") {
-      fetchCourses();
+    setIsLoading(false);
+    if (category === "All categories") {
+      setIsLoading(true);
+      const coursesResponse = await axios.get(`/api/courses`);
+      setCourses(coursesResponse.data);
+      setIsLoading(false);
     } else {
+      setIsLoading(true);
       setCourses((prev) =>
-        prev.filter((course) => course.category.includes(category.title))
+        prev.filter((course) =>
+          course.categories.map((c) => c.title).includes(category)
+        )
       );
+      setIsLoading(false);
     }
-    setChosenCategory(category.title);
+    setChosenCategory(category);
   };
+  console.log(isLoading);
   const makeUniq = (arr) => {
     const uniqSet = new Set(arr);
     return [...uniqSet];
   };
-
   return (
     <Layout user={user} title={"Home"}>
       {courses.length < 1 && chosenCategory === "Category" ? (
@@ -84,10 +96,21 @@ export default function Home({ user }) {
                 </button>
                 <ul className="dropdown-menu w-0">
                   {categories?.map((cat) => (
-                    <li key={cat.id} onClick={() => filteredByCategory(cat)}>
+                    <li
+                      key={cat.id}
+                      onClick={() => filteredByCategory(cat.title)}
+                    >
                       <span className="dropdown-item">{cat.title}</span>
                     </li>
                   ))}
+                  <li>
+                    <span
+                      className="dropdown-item"
+                      onClick={() => filteredByCategory("All categories")}
+                    >
+                      All categories
+                    </span>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -95,40 +118,50 @@ export default function Home({ user }) {
               From Novice to Pro: Dynamic Web Developer Courses for Every Skill
               Level
             </h1>
-            <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
-              {makeUniq(
-                courses
-                  ?.filter((course) =>
-                    course.title
-                      .toLowerCase()
-                      .includes(searchValue.toLowerCase())
-                  )
-                  .concat(
-                    courses.filter((course) =>
-                      course.tag
-                        .join()
+            {isLoading ? (
+              <div className={`${s.loadingSmall}`}>
+                <Image src={loading} width="200" height={200} alt="" />
+              </div>
+            ) : (
+              <>
+                <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                  {makeUniq(
+                    courses
+                      ?.filter((course) =>
+                        course.title
+                          .toLowerCase()
+                          .includes(searchValue.toLowerCase())
+                      )
+                      .concat(
+                        courses.filter((course) =>
+                          course.tags
+                            .join()
+                            .toLowerCase()
+                            .includes(searchValue.toLowerCase())
+                        )
+                      )
+                  ).map((course) => (
+                    <Card key={course.id} course={course} />
+                  ))}
+                </div>
+                {makeUniq(
+                  courses
+                    ?.filter((course) =>
+                      course.title
                         .toLowerCase()
                         .includes(searchValue.toLowerCase())
                     )
-                  )
-              ).map((course) => (
-                <Card key={course.id} course={course} />
-              ))}
-            </div>
-            {makeUniq(
-              courses
-                ?.filter((course) =>
-                  course.title.toLowerCase().includes(searchValue.toLowerCase())
-                )
-                .concat(
-                  courses.filter((course) =>
-                    course.tag
-                      .join()
-                      .toLowerCase()
-                      .includes(searchValue.toLowerCase())
-                  )
-                )
-            ).length < 1 && <div className={s.coursesLess}>No courses</div>}
+                    .concat(
+                      courses.filter((course) =>
+                        course.tags
+                          .join()
+                          .toLowerCase()
+                          .includes(searchValue.toLowerCase())
+                      )
+                    )
+                ).length < 1 && <div className={s.coursesLess}>No courses</div>}
+              </>
+            )}
           </div>
         </div>
       )}
@@ -139,8 +172,11 @@ export default function Home({ user }) {
 export const getServerSideProps = withIronSessionSsr(async function ({
   req,
   res,
+  query,
 }) {
   const user = req.session.user;
+  const dbCourses = service.getCoursesWithCategories(firestoreDb);
+  const categories = service.getCategories(firestoreDb);
   if (user === undefined) {
     return {
       redirect: {
@@ -151,7 +187,10 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   }
 
   return {
-    props: { user: req.session.user },
+    props: {
+      dbCourses: JSON.stringify(dbCourses),
+      user: req.session.user,
+    },
   };
 },
 sessionOptions);

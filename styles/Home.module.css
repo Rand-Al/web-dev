@@ -12,13 +12,21 @@
   height: 100vh;
   background-color: rgba(33, 37, 41, 0.048);
 }
+.loadingSmall {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  width: 100%;
+  padding: 40px 0;
+}
 .error {
   border: 1px solid red;
 }
 .errorField {
   font-size: 24px;
   padding-left: 10px;
-  margin-bottom: -3px;
+  margin-bottom: 5px;
   color: red;
 }
 .focus:focus {

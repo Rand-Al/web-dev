@@ -2,14 +2,11 @@ import service from "../../../data/firestore/service";
 import dbFirestore from "../../../data/firestore/firestore.js";
 
 export default async function handler(req, res) {
-  if (req.method === "GET") {
-  }
   if (req.method === "POST") {
     if (req.body.delete === true) {
-      const id = req.body.id;
-      const userId = req.body.userId;
+      const commentId = req.body.id;
       const courseId = req.body.courseId;
-      await service.deleteComment(dbFirestore, id, courseId, userId);
+      await service.deleteComment(dbFirestore, commentId, courseId);
       res.status(200).end();
     } else {
       const comment = req.body.comment;

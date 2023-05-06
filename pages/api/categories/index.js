@@ -1,5 +1,5 @@
-import service from "../../data/firestore/service.js";
-import dbFirestore from "../../data/firestore/firestore.js";
+import service from "../../../data/firestore/service.js";
+import dbFirestore from "../../../data/firestore/firestore.js";
 
 export default async function handler(req, res) {
   if (req.method === "GET") {
@@ -12,6 +12,7 @@ export default async function handler(req, res) {
       res.status(200).end();
     } else {
       const category = req.body.title;
+      console.log(category);
       await service.addCategory(dbFirestore, category);
       res.status(200).end();
     }

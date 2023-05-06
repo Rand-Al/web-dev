@@ -7,14 +7,19 @@ import { useState, useEffect } from "react";
 
 const Card = ({ course }) => {
   const [ratingValue, setRatingValue] = useState(5);
+  const [comments, setComments] = useState([]);
   useEffect(() => {
     const fetchRating = async () => {
       const res = await axios.get(`/api/rating/${course.id}`);
       setRatingValue(Number(res.data));
     };
+    const fetchComments = async () => {
+      const res = await axios.get(`/api/comments/${course.id}`);
+      setComments(res.data);
+    };
+    fetchComments();
     fetchRating();
   }, [course.id]);
-
   const pluralize = (count, noun, suffix = "s") =>
     `${count} ${noun}${count !== 1 ? suffix : ""}`;
   return (
@@ -40,7 +45,7 @@ const Card = ({ course }) => {
           <Link href={`/courses/${course.id}`} className="btn btn-primary">
             Details
           </Link>
-          <div>{pluralize(course.comments.length, "comment")}</div>
+          <div>{pluralize(comments.length, "comment")}</div>
         </div>
       </div>
     </div>

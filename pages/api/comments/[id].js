@@ -5,6 +5,6 @@ export default async function handler(req, res) {
   if (req.method === "GET") {
     return res
       .status(200)
-      .json(await service.getCoursesWithCategories(dbFirestore, req.query.id));
+      .json(await service.getCourseComments(dbFirestore, req.query.id));
   }
 }

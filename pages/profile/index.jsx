@@ -73,7 +73,6 @@ const Profile = ({ usersList, user }) => {
   const cancelEdit = () => {
     setIsEdit(false);
   };
-  console.log(currentUser.ava);
   return (
     <Layout user={user} title={"Profile"}>
       {isSuccess && (

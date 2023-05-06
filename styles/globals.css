@@ -207,3 +207,6 @@ a.active {
   width: 100%;
   z-index: 5;
 }
+.category:last-child {
+  margin-bottom: 14px;
+}
