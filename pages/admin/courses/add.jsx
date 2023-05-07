@@ -5,6 +5,9 @@ import Layout from "@/pages/Layout";
 import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions } from "../../../lib/session";
 import s from "../../../styles/Course.module.css";
+import firestoreDb from "../../../data/firestore/firestore";
+import f from "../../../data/firestore/service";
+import Image from "next/image";
 
 const AddCourse = ({ categoriesList, user }) => {
   const router = useRouter();
@@ -106,7 +109,6 @@ const AddCourse = ({ categoriesList, user }) => {
     router.back();
   };
 
-  console.log(path);
   return (
     <Layout user={user}>
       <div className="container">
@@ -130,16 +132,18 @@ const AddCourse = ({ categoriesList, user }) => {
           <div className="d-flex align-items-end gap-3">
             <div className="mb-3 d-flex flex-column gap-1">
               <h4 className="align-self-center mb-0">Select Image</h4>
-              <img
-                src={
-                  createObjectURL
-                    ? createObjectURL
-                    : "/images/tech/placeholderCourse.jpg"
-                }
-                width="300"
-                height="auto"
-                alt=""
-              />
+              <div className="editCourseImage-ibg">
+                <Image
+                  src={
+                    createObjectURL
+                      ? createObjectURL
+                      : "/images/tech/placeholderCourse.jpg"
+                  }
+                  width="300"
+                  height="100"
+                  alt=""
+                />
+              </div>
               <label
                 htmlFor="avatar"
                 className="btn btn-primary align-self-stretch"
@@ -288,10 +292,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   res,
 }) {
   const user = req.session.user;
-  const resCategories = await axios.get(
-    `${process.env.API_URL}/api/categories`
-  );
-  const categoriesList = resCategories.data;
+  const categoriesList = await f.getCategories(firestoreDb);
   if (user === undefined) {
     return {
       redirect: {
@@ -302,7 +303,10 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   }
 
   return {
-    props: { categoriesList, user: req.session.user },
+    props: {
+      categoriesList,
+      user: req.session.user,
+    },
   };
 },
 sessionOptions);

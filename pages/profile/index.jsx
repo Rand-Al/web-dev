@@ -6,6 +6,8 @@ import s from "../../styles/Profile.module.css";
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import f from "../../data/firestore/service";
+import firestoreDb from "../../data/firestore/firestore";
 
 const Profile = ({ usersList, user }) => {
   const router = useRouter();
@@ -275,8 +277,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   res,
 }) {
   const user = req.session.user;
-  const resUser = await axios.get(`${process.env.API_URL}/api/users`);
-  const usersList = resUser.data;
+  const usersList = await f.getUsers(firestoreDb);
   if (user === undefined) {
     return {
       props: {},

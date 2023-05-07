@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import s from "../../../styles/Table.module.css";
 import firestoreDb from "../../../data/firestore/firestore";
 import f from "../../../data/firestore/service";
+import Image from "next/image";
 
 const Courses = ({ coursesList, user }) => {
   const router = useRouter();
@@ -96,19 +97,29 @@ const Courses = ({ coursesList, user }) => {
                       <td>
                         <div className={s.height}>{course.description}</div>
                       </td>
-                      {course.categories.length ? (
-                        <td>
-                          {course.tags.map((tag, idx) => (
-                            <div key={idx}>{tag}, </div>
-                          ))}
-                        </td>
-                      ) : (
-                        <td className="fst-italic">No assigned categories.</td>
-                      )}
-
+                      <td>
+                        {!course.categories.length && (
+                          <i>No assigned category.</i>
+                        )}
+                        {course.categories.map((category) => {
+                          return (
+                            <div key={category.id}>{category.title + ", "}</div>
+                          );
+                        })}
+                      </td>
+                      <td>
+                        {course.tags.map((tag, idx) => (
+                          <div key={idx}>{tag}, </div>
+                        ))}
+                      </td>
                       <td>
                         <div className="image-ibg-course">
-                          <img src={course.image} alt="" />
+                          <Image
+                            src={course.image}
+                            alt=""
+                            width="150"
+                            height="100"
+                          />
                         </div>
                       </td>
                       <td>
@@ -117,14 +128,24 @@ const Courses = ({ coursesList, user }) => {
                             href={`/admin/courses/${course.id}`}
                             className={s.pic}
                           >
-                            <img src="/images/tech/edit.svg" alt="" />
+                            <Image
+                              src="/images/tech/edit.svg"
+                              alt=""
+                              width="30"
+                              height="30"
+                            />
                           </Link>
                           <div
                             onClick={() => deleteCourse(course.id)}
                             href={`/admin/courses/${course.id}`}
                             className={s.pic}
                           >
-                            <img src="/images/tech/delete.svg" alt="" />
+                            <Image
+                              src="/images/tech/delete.svg"
+                              alt=""
+                              width="30"
+                              height="30"
+                            />
                           </div>
                         </div>
                       </td>

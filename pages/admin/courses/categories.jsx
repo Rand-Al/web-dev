@@ -12,7 +12,6 @@ import f from "../../../data/firestore/service";
 const Categories = ({ categoriesList, user }) => {
   const router = useRouter();
   const [categories, setCategories] = useState(categoriesList);
-  console.log(categories);
   const [category, setCategory] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const handleCategories = async (e) => {
@@ -20,7 +19,6 @@ const Categories = ({ categoriesList, user }) => {
     try {
       if (category.length > 1) {
         const res = await axios.post(`/api/categories`, { title: category });
-        console.log(category);
         if (res.status === 200) {
           const res = await axios.get("/api/categories");
           setCategories(res.data);

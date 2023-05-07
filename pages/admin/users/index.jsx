@@ -6,25 +6,26 @@ import { sessionOptions } from "../../../lib/session";
 import AdminLayout from "@/layout/AdminLayout";
 import { useRouter } from "next/router";
 import s from "../../../styles/Table.module.css";
+import firestoreDb from "../../../data/firestore/firestore";
+import f from "../../../data/firestore/service";
+import Image from "next/image";
 
 const UsersTable = ({ usersList, user }) => {
   const router = useRouter();
   const [users, setUsers] = useState(usersList);
   const [searchValue, setSearchValue] = useState("");
-  const changeStatus = (id, isApproved) => {
-    axios
-      .put("/api/users", [{ id: id, is: isApproved }])
-      .then((res) => console.log(res));
+  const changeStatus = async (id, isApproved) => {
+    const res = await axios.put("/api/users", [{ id: id, is: isApproved }]);
+    console.log(res);
     setUsers((prev) => {
       const user = prev.find((user) => user.id === id);
       user.isApproved = true;
       return [...prev];
     });
   };
-  const deleteUser = (id) => {
-    axios
-      .delete(`/api/users/${id}`, { data: id })
-      .then((res) => console.log(res));
+  const deleteUser = async (id) => {
+    const res = await axios.delete(`/api/users/${id}`, { data: id });
+    console.log(res);
     setUsers((prev) => prev.filter((user) => user.id !== id));
   };
   const goBack = () => {
@@ -37,7 +38,7 @@ const UsersTable = ({ usersList, user }) => {
           <button onClick={() => goBack()} className="btn btn-primary mb-2">
             &#8592; Back
           </button>
-          <div className="">
+          <div className="d-flex gap-3">
             <h2>Users</h2>{" "}
             <form className="d-flex w-100 search mb-3">
               <input
@@ -99,10 +100,12 @@ const UsersTable = ({ usersList, user }) => {
                           {user.isApproved ? (
                             "Approved"
                           ) : (
-                            <img
+                            <Image
                               src="/images/tech/edit.svg"
                               alt=""
                               className="text-center"
+                              width={30}
+                              height={30}
                             />
                           )}
                         </div>
@@ -114,7 +117,12 @@ const UsersTable = ({ usersList, user }) => {
                             onClick={() => deleteUser(user.id)}
                             className={s.pic}
                           >
-                            <img src="/images/tech/delete.svg" alt="" />
+                            <Image
+                              src="/images/tech/delete.svg"
+                              alt=""
+                              width={30}
+                              height={30}
+                            />
                           </div>
                         )}
                       </td>
@@ -136,8 +144,8 @@ export const getServerSideProps = withIronSessionSsr(async function ({
   res,
 }) {
   const user = req.session.user;
-  const resUsers = await axios.get(`${process.env.API_URL}/api/users`);
-  const usersList = resUsers.data;
+  const usersList = await f.getUsers(firestoreDb);
+
   if (user === undefined) {
     return {
       redirect: {

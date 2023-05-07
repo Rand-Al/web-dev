@@ -25,7 +25,7 @@ const Card = ({ course }) => {
   return (
     <div className="card card-width">
       <div className="image-ibg ">
-        <img
+        <Image
           src={course.image}
           className="card-img-top radius"
           width={340}

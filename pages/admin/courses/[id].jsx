@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import Layout from "@/pages/Layout";
 import { withIronSessionSsr } from "iron-session/next";
@@ -7,7 +7,7 @@ import { sessionOptions } from "../../../lib/session";
 import s from "../../../styles/Course.module.css";
 import firestoreDb from "../../../data/firestore/firestore";
 import f from "../../../data/firestore/service";
-import { v4 as uuidv4 } from "uuid";
+import Image from "next/image";
 
 const CourseEdit = ({ coursesList, categoriesList, user }) => {
   const router = useRouter();
@@ -28,7 +28,7 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
   const [fileName, setFileName] = useState("");
   const [emptyFieldError, setEmptyFieldError] = useState("");
   const addCategory = async (category, courseId) => {
-    const resCategory = await axios.post("/api/courses", {
+    await axios.post("/api/courses", {
       category,
       courseId,
       toCourse: true,
@@ -48,7 +48,6 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
       courseId,
       delCat: true,
     });
-    console.log(res);
     const updatedCourse = course;
     updatedCourse.categories = [
       ...course.categories.filter((cat) => cat.id !== categoryId),
@@ -85,25 +84,25 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
       setEmptyFieldError("noTitle");
     } else if (course.description.length < 1) {
       setEmptyFieldError("noDescription");
-    }
-    let newCourse = course;
-    newCourse.tags = tags.split(", ");
-    setCourse(newCourse);
-    const responseCourse = await axios.put("/api/courses", {
-      course,
-      image: path && path,
-    });
-    if (responseCourse.status === 200) {
-      setIsSuccess(true);
-      setTimeout(() => {
-        router.push("/admin/courses");
-      }, 2000);
+    } else {
+      let newCourse = course;
+      newCourse.tags = tags.split(", ");
+      setCourse(newCourse);
+      const responseCourse = await axios.put("/api/courses", {
+        course,
+        image: path && path,
+      });
+      if (responseCourse.status === 200) {
+        setIsSuccess(true);
+        setTimeout(() => {
+          router.push("/admin/courses");
+        }, 2000);
+      }
     }
   };
   const goBack = () => {
     router.back();
   };
-  console.log(path);
   return (
     <Layout user={user}>
       <div className="container">
@@ -127,12 +126,15 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
           <div className="d-flex align-items-center gap-2">
             <div className="mb-3 d-flex flex-column gap-1 ">
               <h4>Select Image</h4>
-              <img
-                src={createObjectURL ? createObjectURL : course.image}
-                width="300"
-                height="auto"
-                alt=""
-              />
+              <div className="editCourseImage-ibg">
+                <Image
+                  src={createObjectURL ? createObjectURL : course.image}
+                  width="300"
+                  height="100"
+                  alt=""
+                />
+              </div>
+
               <label
                 htmlFor="avatar"
                 className="btn btn-primary align-self-start"
@@ -148,32 +150,57 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
               </label>
             </div>
             <div className="flex-grow-1">
+              {(emptyFieldError === "noTitleAndDescription" ||
+                emptyFieldError === "noTitle") && (
+                <div className={`px-2 fs-5 mb-1 ${s.redText}`}>
+                  Title is required!
+                </div>
+              )}
               <div className={`form-floating mb-3`}>
                 <input
                   type="text"
-                  className={`form-control`}
+                  className={`form-control ${
+                    (emptyFieldError === "noTitleAndDescription" ||
+                      emptyFieldError === "noTitle") &&
+                    s.red
+                  }`}
                   id="floatingTitle"
                   placeholder="Title"
                   value={course?.title}
                   onChange={(e) =>
-                    setCourse((prev) => ({ ...prev, title: e.target.value }))
+                    setCourse(
+                      (prev) => ({ ...prev, title: e.target.value }),
+                      setEmptyFieldError("")
+                    )
                   }
                 />
                 <label htmlFor="floatingInput">Title</label>
               </div>
-
+              {(emptyFieldError === "noTitleAndDescription" ||
+                emptyFieldError === "noDescription") && (
+                <div className={`px-2 fs-5 ${s.redText}`}>
+                  Description is required!
+                </div>
+              )}
               <div className="form-floating mb-3">
                 <textarea
                   type="text"
-                  className={`form-control textarea`}
+                  className={`form-control textarea ${
+                    (emptyFieldError === "noTitleAndDescription" ||
+                      emptyFieldError === "noDescription") &&
+                    s.red
+                  }`}
                   id="floatingArea"
                   placeholder="Description"
                   value={course?.description}
                   onChange={(e) =>
-                    setCourse((prev) => ({
-                      ...prev,
-                      description: e.target.value,
-                    }))
+                    setCourse(
+                      (prev) => ({
+                        ...prev,
+                        description: e.target.value,
+                      }),
+                      setEmptyFieldError("")
+                    )
                   }
                 ></textarea>
                 <label htmlFor="floatingPassword">Description</label>
@@ -182,7 +209,11 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
           </div>
 
           <div className="form-floating d-flex mb-3 align-items-center gap-2">
-            <div className="border flex-grow-1 p-2 d-flex gap-3 flex-wrap">
+            <div
+              className={`border flex-grow-1 p-2 d-flex gap-3 flex-wrap ${
+                course.categories.length < 1 && s.opacity
+              }`}
+            >
               {course?.categories.map((cat) => (
                 <div key={cat.id} className="d-flex border">
                   <span className="px-2 fst-italic">{cat?.title}</span>

@@ -12,7 +12,10 @@ export default function handler(req, res) {
     const form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
       const data = fs.readFileSync(files.avatar.filepath);
-      fs.writeFileSync(`./public/${files.avatar.originalFilename}`, data);
+      fs.writeFileSync(
+        `./public/images/uploads/${files.avatar.originalFilename}`,
+        data
+      );
       fs.unlinkSync(files.avatar.filepath);
       res.status(201).json({
         filePath: `${req.headers.origin}/${files.avatar.originalFilename}`,

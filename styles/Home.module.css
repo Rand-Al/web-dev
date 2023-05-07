@@ -42,8 +42,18 @@
   top: 0;
   right: 2%;
   cursor: pointer;
-  transition: all 0.1s linear;
+  transition: all 0.1s ease-out;
 }
 .deleteComment:hover {
   transform: scale(110%);
+}
+.comments {
+  padding: 10px 66px;
+}
+.ava {
+  width: 60px !important;
+  margin-right: 10px !important;
+}
+.body {
+  font-size: 18px !important;
 }

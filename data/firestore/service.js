@@ -35,7 +35,7 @@ const data = {
     };
     try {
       await setDoc(userRef, data, { merge: true });
-      console.log("Entire Document has been updated successfully");
+      console.log("User has been updated successfully");
     } catch (errors) {
       console.log(errors);
     }
@@ -47,7 +47,7 @@ const data = {
     };
     try {
       await setDoc(userRef, data, { merge: true });
-      console.log("Entire Document has been updated successfully");
+      console.log("User avatar has been updated successfully");
     } catch (errors) {
       console.log(errors);
     }
@@ -67,7 +67,7 @@ const data = {
     };
     try {
       addDoc(usersRef, data);
-      console.log("Document has been added successfully");
+      console.log("User has been added successfully");
     } catch (errors) {
       console.log(errors);
     }
@@ -88,7 +88,7 @@ const data = {
     const userRef = doc(db, "users", `${userId}`);
     try {
       await deleteDoc(userRef);
-      console.log("Entire Document has been deleted successfully.");
+      console.log("User has been deleted successfully.");
     } catch (errors) {
       console.log(errors);
     }
@@ -110,7 +110,7 @@ const data = {
     };
     try {
       addDoc(categoriesRef, data);
-      console.log("Document has been added successfully");
+      console.log("Category has been added successfully");
     } catch (errors) {
       console.log(errors);
     }
@@ -123,7 +123,7 @@ const data = {
     };
     try {
       addDoc(categoriesCoursesRef, data);
-      console.log("Document has been added successfully");
+      console.log("Category has been assigned to course successfully");
     } catch (errors) {
       console.log(errors);
     }
@@ -145,10 +145,9 @@ const data = {
       "coursesCategories",
       categoriesCoursesData[0].id
     );
-    console.log(categoriesCoursesData);
     try {
       deleteDoc(docCategoriesCoursesRef);
-      console.log("Document has been deleted successfully");
+      console.log("Category has been removed from course successfully");
     } catch (errors) {
       console.log(errors);
     }
@@ -157,7 +156,7 @@ const data = {
     const categoryRef = doc(db, "categories", `${categoryId}`);
     try {
       await deleteDoc(categoryRef);
-      console.log("Entire Document has been deleted successfully.");
+      console.log("Category has been deleted successfully.");
     } catch (errors) {
       console.log(errors);
     }
@@ -209,14 +208,27 @@ const data = {
   },
   addComment: async (db, comment, userId, courseId) => {
     const commentsRef = collection(db, "courses", `${courseId}`, "comments");
+    const date = new Date();
+    const options = {
+      month: "long",
+      day: "numeric",
+      timezone: "UTC",
+      hour: "numeric",
+      minute: "numeric",
+    };
+    const sendDate = date.toLocaleString("en", options);
+
+    console.log();
     const data = {
       body: comment,
       userId,
       courseId,
+      createdAt: sendDate,
     };
+    console.log(data.createdAt);
     try {
       await addDoc(commentsRef, data);
-      console.log("Document has been added successfully");
+      console.log("Comment has been added successfully");
     } catch (error) {
       console.log(error);
     }
@@ -305,15 +317,12 @@ const data = {
     ) {
       try {
         addDoc(likesRef, data);
-        console.log("Document has been added successfully");
+        console.log("Like has been added to comment successfully");
       } catch (errors) {
         console.log(errors);
       }
     }
-    if (
-      dislikesList.find((d) => d.userId === rating.userId) &&
-      rating.type === "like"
-    ) {
+    if (dislikesList.find((d) => d.userId === rating.userId)) {
       const rate = dislikesList.find((d) => d.userId === rating.userId);
       const dislikeRef = doc(
         db,
@@ -326,7 +335,7 @@ const data = {
       );
       try {
         await deleteDoc(dislikeRef);
-        console.log("Entire Document has been deleted successfully.");
+        console.log("Dislike has been removed from comment successfully.");
       } catch (errors) {
         console.log(errors);
       }
@@ -338,7 +347,7 @@ const data = {
     ) {
       try {
         addDoc(dislikesRef, data);
-        console.log("Document has been added successfully");
+        console.log("Dislike has been added to comment successfully");
       } catch (errors) {
         console.log(errors);
       }
@@ -356,7 +365,9 @@ const data = {
       );
       try {
         await deleteDoc(likeRef);
-        console.log("Entire Document has been deleted successfully.");
+        console.log(
+          "Like Document has been deleted from comment successfully."
+        );
       } catch (errors) {
         console.log(errors);
       }
@@ -372,7 +383,7 @@ const data = {
     );
     try {
       await deleteDoc(commentRef);
-      console.log("Entire Document has been deleted successfully.");
+      console.log("Comment has been deleted successfully.");
     } catch (errors) {
       console.log(errors);
     }
@@ -393,7 +404,7 @@ const data = {
 
     try {
       addDoc(coursesRef, data);
-      console.log("Document has been added successfully");
+      console.log("Course has been created successfully");
     } catch (errors) {
       console.log(errors);
     }
@@ -450,7 +461,6 @@ const data = {
         categories: categories.flat(Infinity),
       });
     }
-    console.log(coursesWithCategories);
     return coursesWithCategories;
   },
   getCourse: async (db, courseId) => {
@@ -467,11 +477,11 @@ const data = {
       tags: course.tags,
     };
     if (image) {
-      data.image = image;
+      data.image = `/images/uploads${image}`;
     }
     try {
       await setDoc(courseRef, data, { merge: true });
-      console.log("Entire Document has been updated successfully");
+      console.log("Course has been updated successfully");
     } catch (errors) {
       console.log(errors);
     }
@@ -480,7 +490,7 @@ const data = {
     const courseRef = doc(db, "courses", `${courseId}`);
     try {
       await deleteDoc(courseRef);
-      console.log("Entire Document has been deleted successfully.");
+      console.log("Course has been deleted successfully.");
     } catch (errors) {
       console.log(errors);
     }
@@ -491,7 +501,7 @@ const data = {
     const data = { value, userId };
     try {
       addDoc(ratingCol, data);
-      console.log("Document has been added successfully");
+      console.log("Rating has been added successfully");
     } catch (errors) {
       console.log(errors);
     }

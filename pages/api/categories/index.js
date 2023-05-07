@@ -12,7 +12,6 @@ export default async function handler(req, res) {
       res.status(200).end();
     } else {
       const category = req.body.title;
-      console.log(category);
       await service.addCategory(dbFirestore, category);
       res.status(200).end();
     }

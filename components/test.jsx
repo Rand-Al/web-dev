@@ -43,9 +43,6 @@ function updateTimeAgo() {
 
 setInterval(updateTime
 
-
-
-
 User
 продовжи
 ChatGPT
@@ -61,8 +58,8 @@ setInterval(updateTimeAgo, 60000); // оновлювати кожну хвили
 
 export default Test;
 
-// export async function getServerSideProps() {
-//   const res = await axios.get(`${process.env.API_URL}/api/test`);
-//   const usersList = res.data;
-//   return { props: { usersList } };
-// }
+export async function getServerSideProps() {
+  const res = await axios.get(`${process.env.API_URL}/api/test`);
+  const usersList = res.data;
+  return { props: { usersList } };
+}

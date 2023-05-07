@@ -127,18 +127,22 @@ const Course = ({ user, dbCourse, dbComments, users }) => {
               </div>
 
               <p className="fs-4 px-3">{dbCourse.description}</p>
-              <Rating
-                name="simple-controlled"
-                value={ratingValue}
-                onChange={(e, newValue) => {
-                  addRating(newValue, user.id, courseId);
-                }}
-              />
+              <div className="d-flex justify-content-end align-items-center gap-3">
+                <p className="m-0 fs-3 pt-1 fw-bold">Rate this:</p>
+                <Rating
+                  name="simple-controlled"
+                  value={ratingValue}
+                  onChange={(e, newValue) => {
+                    addRating(newValue, user.id, courseId);
+                  }}
+                  className="fs-1"
+                />
+              </div>
             </div>
           </div>
-          <section className="d-flex ">
-            <Comment.Group className="w-100 mt-4">
-              <Header as="h3" dividing>
+          <section className={`d-flex ${s.comments}`}>
+            <Comment.Group className={`w-100 mt-4 `}>
+              <Header as="h3" dividing className="text-center fs-2 pb-3">
                 Comments
               </Header>
               {comments?.map((comment) => {
@@ -147,13 +151,13 @@ const Course = ({ user, dbCourse, dbComments, users }) => {
                 );
                 return (
                   <Comment key={comment.id} className={s.comment}>
-                    <Comment.Avatar src={commentUser?.ava} />
+                    <Comment.Avatar src={commentUser?.ava} className={s.ava} />
                     <Comment.Content>
-                      <Comment.Author as="a">
+                      <Comment.Author className="fs-3" as="a">
                         {commentUser?.firstName}
                       </Comment.Author>
-                      <Comment.Metadata>
-                        <div>Today at 5:42PM</div>
+                      <Comment.Metadata className="fs-5">
+                        <div>{comment.createdAt}</div>
                         {(user.id === comment.userId ||
                           user.role === "admin") && (
                           <div
@@ -162,15 +166,18 @@ const Course = ({ user, dbCourse, dbComments, users }) => {
                             }
                             className={s.deleteComment}
                           >
-                            <img
+                            <Image
                               src="/images/tech/deleteComment.svg"
                               alt=""
                               width={22}
+                              height={22}
                             />
                           </div>
                         )}
                       </Comment.Metadata>
-                      <Comment.Text>{comment.body}</Comment.Text>
+                      <Comment.Text className={s.body}>
+                        {comment.body}
+                      </Comment.Text>
                       <Comment.Actions className="d-flex justify-content-end align-items-center fw-bold">
                         <div className="d-flex align-items-center ">
                           <span className="">{comment.likes?.length}</span>

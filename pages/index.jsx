@@ -49,7 +49,6 @@ export default function Home({ user, dbCategories, dbCourses }) {
     }
     setChosenCategory(category);
   };
-  console.log(isLoading);
   const makeUniq = (arr) => {
     const uniqSet = new Set(arr);
     return [...uniqSet];

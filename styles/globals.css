@@ -115,6 +115,12 @@ a.active {
   height: 50px;
   object-fit: contain !important;
 }
+.editCourseImage-ibg {
+  width: 300px;
+  height: 150px;
+}
+.editCourseImage-ibg {
+}
 .image-ibg-course-details {
   float: left;
   padding-bottom: 20%;
@@ -181,8 +187,8 @@ a.active {
   height: 30px !important;
 }
 .main {
-  padding-top: 88px;
-  padding-bottom: 56px;
+  padding-top: 77px;
+  padding-bottom: 48px;
   overflow: overlay;
 }
 .main::-webkit-scrollbar {
