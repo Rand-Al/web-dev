@@ -8,70 +8,78 @@ import s from "../../../styles/Course.module.css";
 
 const AddCourse = ({ categoriesList, user }) => {
   const router = useRouter();
-  let path = "";
-  const [image, setImage] = useState(null);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [createObjectURL, setCreateObjectURL] = useState(null);
+  const courseId = router.query.id;
   const [course, setCourse] = useState({
     title: "",
     description: "",
-    category: [],
-    tag: [],
+    categories: [],
+    tags: [],
     image: "",
   });
-  const [tagValue, setTagValue] = useState(course.tag.join(", "));
-  const filteredCategories = categoriesList.filter((category) => {
-    return !course.category.includes(category);
-  });
-  const [categories, setCategories] = useState(filteredCategories);
+  const [categories, setCategories] = useState(
+    categoriesList.filter(
+      (cat) => !course.categories.map((categ) => categ.id).includes(cat.id)
+    )
+  );
+  const [createObjectURL, setCreateObjectURL] = useState("");
+  const [image, setImage] = useState(null);
+  const [tags, setTags] = useState(course.tags.join(", "));
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [path, setPath] = useState("");
+  const [fileName, setFileName] = useState("");
   const [emptyFieldError, setEmptyFieldError] = useState("");
-  const addCategories = (title) => {
-    const newCourse = JSON.parse(JSON.stringify(course));
-    newCourse.category.push(title);
-    setCourse(newCourse);
-    const filteredCategories = categoriesList.filter((category) => {
-      return !newCourse.category.includes(category);
+  const addCategory = async (category, courseId) => {
+    const resCategory = await axios.post("/api/courses", {
+      category,
+      courseId,
+      toCourse: true,
     });
+    const updatedCourse = course;
+    updatedCourse.categories = [...course.categories, category];
+    setCourse(updatedCourse);
+    const filteredCategories = categoriesList.filter(
+      (cat) => !course.categories.map((categ) => categ.id).includes(cat.id)
+    );
     setCategories(filteredCategories);
   };
-  const removeCategory = (title, e) => {
+  const deleteCategory = async (categoryId, courseId, e) => {
     e.preventDefault();
-    const newCourse = JSON.parse(JSON.stringify(course));
-    const categoryIndex = newCourse.category.indexOf(title);
-    if (categoryIndex !== -1) {
-      newCourse.category.splice(categoryIndex, 1);
-    }
-    const filteredCategories = categoriesList.filter((category) => {
-      return !newCourse.category.includes(category);
+    const res = await axios.post("/api/courses", {
+      categoryId,
+      courseId,
+      delCat: true,
     });
+    console.log(res);
+    const updatedCourse = course;
+    updatedCourse.categories = [
+      ...course.categories.filter((cat) => cat.id !== categoryId),
+    ];
+    setCourse(updatedCourse);
+    const filteredCategories = categoriesList.filter(
+      (cat) => !course.categories.map((categ) => categ.id).includes(cat.id)
+    );
     setCategories(filteredCategories);
-    setCourse(newCourse);
-  };
-  const handleTag = (value) => {
-    setTagValue(value);
-    const tags = value.split(", ");
-    let newCourse = JSON.parse(JSON.stringify(course));
-    newCourse.tag = tags;
-    setCourse(newCourse);
   };
   const uploadImageToState = async (event) => {
     if (event.target.files[0]) {
       event.preventDefault();
-      const i = event.target.files[0];
-      setImage(i);
-      setCreateObjectURL(URL.createObjectURL(i));
+      const image = event.target.files[0];
+      setImage(image);
+      setCreateObjectURL(URL.createObjectURL(image));
+      const formData = new FormData();
+      formData.append("avatar", image);
+      const responseUpload = await axios.post("/api/upload", formData);
+      const { filePath } = await responseUpload.data;
+      const url = filePath;
+      let localPath = url.match(/\/[\w.-]+\.[\w]+$/)[0];
+      setPath(localPath);
+      let fileName = localPath.replace("/", "");
+      setFileName(fileName);
     }
   };
 
   const handleAllChanges = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("avatar", image);
-    const responseUpload = await axios.post("/api/upload", formData);
-    const { filePath } = await responseUpload.data;
-    const url = filePath;
-    const localPath = url.match(/\/[\w.-]+\.[\w]+$/)[0];
-    path = localPath;
     if (course.title.length < 1 && course.description.length < 1) {
       setEmptyFieldError("noTitleAndDescription");
     } else if (course.title.length < 1) {
@@ -79,29 +87,12 @@ const AddCourse = ({ categoriesList, user }) => {
     } else if (course.description.length < 1) {
       setEmptyFieldError("noDescription");
     } else {
+      let newCourse = course;
+      newCourse.tags = tags.split(", ");
+      setCourse(newCourse);
       const responseCourse = await axios.post("/api/courses", {
         course,
-        image: path,
-      });
-      if (responseCourse.status === 200) {
-        setIsSuccess(true);
-        setTimeout(() => {
-          router.push("/admin/courses");
-        }, 2000);
-      }
-    }
-  };
-  const handleChanges = async (e) => {
-    e.preventDefault();
-    if (course.title.length < 1 && course.description.length < 1) {
-      setEmptyFieldError("noTitleAndDescription");
-    } else if (course.title.length < 1) {
-      setEmptyFieldError("noTitle");
-    } else if (course.description.length < 1) {
-      setEmptyFieldError("noDescription");
-    } else {
-      const responseCourse = await axios.post("/api/courses", {
-        course,
+        image: path && path,
       });
       if (responseCourse.status === 200) {
         setIsSuccess(true);
@@ -114,12 +105,14 @@ const AddCourse = ({ categoriesList, user }) => {
   const goBack = () => {
     router.back();
   };
+
+  console.log(path);
   return (
     <Layout user={user}>
       <div className="container">
         {isSuccess && (
           <div className={`${s.success} container`}>
-            Course successfully added!
+            Course successfully edit!
           </div>
         )}
         <button
@@ -129,39 +122,46 @@ const AddCourse = ({ categoriesList, user }) => {
           &#8592; Back
         </button>
         <form className="d-flex flex-column mb-60">
-          <h1 className="h3 mb-3 fw-normal text-center  fw-bold">
-            <span>Create course:</span>{" "}
-            <span className="underline">{course.title}</span>
+          <h1 className="h3 mb-3 fw-normal text-center mt-4 fw-bold">
+            <span>Add course:</span>
+            {course?.title}
+            <span className="underline"></span>
           </h1>
-          <div className="d-flex align-items-center gap-2">
-            <div className="mb-3 d-flex flex-column gap-1 ">
-              <h4>Select Image</h4>
+          <div className="d-flex align-items-end gap-3">
+            <div className="mb-3 d-flex flex-column gap-1">
+              <h4 className="align-self-center mb-0">Select Image</h4>
               <img
-                src={createObjectURL ? createObjectURL : course.image}
+                src={
+                  createObjectURL
+                    ? createObjectURL
+                    : "/images/tech/placeholderCourse.jpg"
+                }
                 width="300"
                 height="auto"
                 alt=""
               />
               <label
                 htmlFor="avatar"
-                className="btn btn-primary align-self-start"
+                className="btn btn-primary align-self-stretch"
               >
-                {path ? path : "Chose Photo"}
+                {fileName ? fileName : "Chose Photo"}
                 <input
                   type="file"
                   id="avatar"
                   accept="image/*"
-                  onChange={uploadImageToState}
                   className="absolute"
+                  onChange={uploadImageToState}
                 />
               </label>
             </div>
-            <div className="flex-grow-1">
+            <div className="flex-grow-1 d-flex flex-column justify-content-between">
               {(emptyFieldError === "noTitleAndDescription" ||
                 emptyFieldError === "noTitle") && (
-                <div className="px-2 fs-5">Title is required!</div>
+                <div className={`px-2 fs-5 mb-1 ${s.redText}`}>
+                  Title is required!
+                </div>
               )}
-              <div className="form-floating mb-3">
+              <div className={`form-floating mb-3`}>
                 <input
                   type="text"
                   className={`form-control ${
@@ -171,7 +171,7 @@ const AddCourse = ({ categoriesList, user }) => {
                   }`}
                   id="floatingTitle"
                   placeholder="Title"
-                  value={course.title}
+                  value={course?.title}
                   onChange={(e) =>
                     setCourse(
                       (prev) => ({ ...prev, title: e.target.value }),
@@ -183,7 +183,9 @@ const AddCourse = ({ categoriesList, user }) => {
               </div>
               {(emptyFieldError === "noTitleAndDescription" ||
                 emptyFieldError === "noDescription") && (
-                <div className="px-2 fs-5">Description is required!</div>
+                <div className={`px-2 fs-5 ${s.redText}`}>
+                  Description is required!
+                </div>
               )}
               <div className="form-floating mb-3">
                 <textarea
@@ -195,7 +197,7 @@ const AddCourse = ({ categoriesList, user }) => {
                   }`}
                   id="floatingArea"
                   placeholder="Description"
-                  value={course.description}
+                  value={course?.description}
                   onChange={(e) =>
                     setCourse(
                       (prev) => ({
@@ -212,20 +214,22 @@ const AddCourse = ({ categoriesList, user }) => {
           </div>
 
           <div className="form-floating d-flex mb-3 align-items-center gap-2">
-            <div className="border flex-grow-1 p-3 d-flex gap-3 flex-wrap">
-              {course.category.map((category) => {
-                return (
-                  <div className="d-flex border" key={category}>
-                    <span className="px-2 fst-italic">{category}</span>
-                    <button
-                      onClick={(e) => removeCategory(category, e)}
-                      className="btn btn-danger py-0 px-2"
-                    >
-                      X
-                    </button>
-                  </div>
-                );
-              })}
+            <div className="border flex-grow-1 p-2 d-flex gap-3 flex-wrap">
+              <span className="fst-italic">
+                Categories could be added only after creating course in editing
+                section.
+              </span>
+              {course?.categories.map((cat) => (
+                <div key={cat.id} className="d-flex border">
+                  <span className="px-2 fst-italic">{cat?.title}</span>
+                  <button
+                    onClick={(e) => deleteCategory(cat.id, course.id, e)}
+                    className="btn btn-danger py-0 px-2 disabled"
+                  >
+                    X
+                  </button>
+                </div>
+              ))}
             </div>
             <div>
               <div className="btn-group">
@@ -234,30 +238,22 @@ const AddCourse = ({ categoriesList, user }) => {
                   className="btn btn-primary dropdown-toggle "
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
+                  disabled
                 >
                   Category
                 </button>
-                {categories.length !== 0 ? (
-                  <ul className="dropdown-menu">
-                    {categories.map((category) => {
-                      return (
-                        <li key={category.id}>
-                          <div
-                            onClick={(e) => addCategories(e.target.innerHTML)}
-                            className="dropdown-item"
-                            href="#"
-                          >
-                            {category.title}
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                ) : (
-                  <ul className="dropdown-menu px-3">
-                    <li>No Items</li>
-                  </ul>
-                )}
+                <ul className="dropdown-menu">
+                  {categories?.map((cat) => (
+                    <li key={cat.id}>
+                      <div
+                        onClick={() => addCategory(cat, course.id)}
+                        className="dropdown-item"
+                      >
+                        {cat.title}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
@@ -267,28 +263,18 @@ const AddCourse = ({ categoriesList, user }) => {
               className="form-control"
               id="floatingTags"
               placeholder="Tags"
-              value={tagValue}
-              onChange={(e) => handleTag(e.target.value)}
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
             />
             <label htmlFor="floatingInput">Tags</label>
           </div>
-          {createObjectURL ? (
-            <button
-              onClick={(e) => handleAllChanges(e)}
-              className="align-self-end btn btn-lg btn-primary"
-              type="submit"
-            >
-              Add course
-            </button>
-          ) : (
-            <button
-              onClick={(e) => handleChanges(e)}
-              className="align-self-end btn btn-lg btn-primary"
-              type="submit"
-            >
-              Add course
-            </button>
-          )}
+          <button
+            className="align-self-end btn btn-lg btn-primary"
+            type="submit"
+            onClick={(e) => handleAllChanges(e)}
+          >
+            Confirm changes
+          </button>
         </form>
       </div>
     </Layout>

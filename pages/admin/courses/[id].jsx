@@ -20,18 +20,19 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
       (cat) => !course.categories.map((categ) => categ.id).includes(cat.id)
     )
   );
-  const makeUniq = (arr) => {
-    const uniqSet = new Set(arr);
-    return [...uniqSet];
-  };
+  const [createObjectURL, setCreateObjectURL] = useState(null);
+  const [image, setImage] = useState(null);
+  const [tags, setTags] = useState(course.tags.join(", "));
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [path, setPath] = useState("");
+  const [fileName, setFileName] = useState("");
+  const [emptyFieldError, setEmptyFieldError] = useState("");
   const addCategory = async (category, courseId) => {
     const resCategory = await axios.post("/api/courses", {
       category,
       courseId,
       toCourse: true,
     });
-    console.log(resCategory);
-
     const updatedCourse = course;
     updatedCourse.categories = [...course.categories, category];
     setCourse(updatedCourse);
@@ -58,12 +59,59 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
     );
     setCategories(filteredCategories);
   };
+  const uploadImageToState = async (event) => {
+    if (event.target.files[0]) {
+      event.preventDefault();
+      const image = event.target.files[0];
+      setImage(image);
+      setCreateObjectURL(URL.createObjectURL(image));
+      const formData = new FormData();
+      formData.append("avatar", image);
+      const responseUpload = await axios.post("/api/upload", formData);
+      const { filePath } = await responseUpload.data;
+      const url = filePath;
+      let localPath = url.match(/\/[\w.-]+\.[\w]+$/)[0];
+      setPath(localPath);
+      let fileName = localPath.replace("/", "");
+      setFileName(fileName);
+    }
+  };
+
+  const handleAllChanges = async (e) => {
+    e.preventDefault();
+    if (course.title.length < 1 && course.description.length < 1) {
+      setEmptyFieldError("noTitleAndDescription");
+    } else if (course.title.length < 1) {
+      setEmptyFieldError("noTitle");
+    } else if (course.description.length < 1) {
+      setEmptyFieldError("noDescription");
+    }
+    let newCourse = course;
+    newCourse.tags = tags.split(", ");
+    setCourse(newCourse);
+    const responseCourse = await axios.put("/api/courses", {
+      course,
+      image: path && path,
+    });
+    if (responseCourse.status === 200) {
+      setIsSuccess(true);
+      setTimeout(() => {
+        router.push("/admin/courses");
+      }, 2000);
+    }
+  };
   const goBack = () => {
     router.back();
   };
+  console.log(path);
   return (
     <Layout user={user}>
       <div className="container">
+        {isSuccess && (
+          <div className={`${s.success} container`}>
+            Course successfully edit!
+          </div>
+        )}
         <button
           onClick={() => goBack()}
           className="btn btn-primary mt-3 align-self-start"
@@ -79,16 +127,23 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
           <div className="d-flex align-items-center gap-2">
             <div className="mb-3 d-flex flex-column gap-1 ">
               <h4>Select Image</h4>
-              <img src="" width="300" height="auto" alt="" />
+              <img
+                src={createObjectURL ? createObjectURL : course.image}
+                width="300"
+                height="auto"
+                alt=""
+              />
               <label
                 htmlFor="avatar"
                 className="btn btn-primary align-self-start"
               >
+                {fileName ? fileName : "Chose Photo"}
                 <input
                   type="file"
                   id="avatar"
                   accept="image/*"
                   className="absolute"
+                  onChange={uploadImageToState}
                 />
               </label>
             </div>
@@ -127,7 +182,7 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
           </div>
 
           <div className="form-floating d-flex mb-3 align-items-center gap-2">
-            <div className="border flex-grow-1 p-3 d-flex gap-3 flex-wrap">
+            <div className="border flex-grow-1 p-2 d-flex gap-3 flex-wrap">
               {course?.categories.map((cat) => (
                 <div key={cat.id} className="d-flex border">
                   <span className="px-2 fst-italic">{cat?.title}</span>
@@ -171,14 +226,15 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
               className="form-control"
               id="floatingTags"
               placeholder="Tags"
-              value={course?.tags.join(", ")}
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
             />
             <label htmlFor="floatingInput">Tags</label>
           </div>
-
           <button
             className="align-self-end btn btn-lg btn-primary"
             type="submit"
+            onClick={(e) => handleAllChanges(e)}
           >
             Confirm changes
           </button>

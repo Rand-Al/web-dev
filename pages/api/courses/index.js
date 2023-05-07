@@ -3,12 +3,13 @@ import dbFirestore from "../../../data/firestore/firestore.js";
 
 export default async function handler(req, res) {
   if (req.method === "GET") {
-    return res.status(200).json(await service.getCoursesWithCategories(dbFirestore));
+    return res
+      .status(200)
+      .json(await service.getCoursesWithCategories(dbFirestore));
   }
   if (req.method === "PUT") {
     const course = req.body.course;
     const image = req.body.image;
-
     await service.editCourse(dbFirestore, course, image);
     return res.status(200).end();
   }

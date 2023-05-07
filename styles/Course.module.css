@@ -2,7 +2,11 @@
   border: 1px solid red;
 }
 .red:focus {
-  border: 2px solid red;
+  border: 1px solid red;
+  box-shadow: 1px 1px 10px rgba(255, 0, 0, 0.281);
+}
+.redText {
+  color: red;
 }
 .success {
   border: 1px solid rgba(0, 0, 0, 0.075);

@@ -21,7 +21,6 @@ const CourseEdit = ({ coursesList, categoriesList, user }) => {
   const [course, setCourse] = useState(
     coursesList.filter((course) => courseId === course.id)
   );
-  console.log(course);
   // const filteredCategories = categoriesList.filter((category) => {
   //   return !course.categories.includes(category);
   // });

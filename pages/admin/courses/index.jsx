@@ -27,13 +27,6 @@ const Courses = ({ coursesList, user }) => {
   const goBack = () => {
     router.back();
   };
-  const returnCategories = async (courseId) => {
-    const res = await axios.get(`/api/categories/${courseId}`);
-    const categories = res.data;
-    return categories;
-  };
-
-  console.log(courses);
   return (
     <Layout user={user} title={"Courses"}>
       <AdminLayout>
@@ -88,7 +81,7 @@ const Courses = ({ coursesList, user }) => {
               </tr>
             </thead>
             <tbody>
-              {coursesList
+              {courses
                 .filter((course) =>
                   course.title.toLowerCase().includes(searchValue.toLowerCase())
                 )
@@ -103,18 +96,16 @@ const Courses = ({ coursesList, user }) => {
                       <td>
                         <div className={s.height}>{course.description}</div>
                       </td>
-                      <td>
-                        {course.categories.map((category) => {
-                          return (
-                            <div key={category.id}>{category.title}, </div>
-                          );
-                        })}
-                      </td>
-                      <td>
-                        {course.tags.map((tag, idx) => (
-                          <div key={idx}>{tag}, </div>
-                        ))}
-                      </td>
+                      {course.categories.length ? (
+                        <td>
+                          {course.tags.map((tag, idx) => (
+                            <div key={idx}>{tag}, </div>
+                          ))}
+                        </td>
+                      ) : (
+                        <td className="fst-italic">No assigned categories.</td>
+                      )}
+
                       <td>
                         <div className="image-ibg-course">
                           <img src={course.image} alt="" />

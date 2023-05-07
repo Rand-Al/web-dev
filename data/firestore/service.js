@@ -383,8 +383,13 @@ const data = {
     const data = {
       title: course.title,
       description: course.description,
-      tag: course.tag,
+      tags: course.tags,
     };
+    if (image) {
+      data.image = image;
+    } else if (!image) {
+      data.image = "/images/tech/placeholderCourse.jpg";
+    }
 
     try {
       addDoc(coursesRef, data);
@@ -456,14 +461,10 @@ const data = {
   },
   editCourse: async (db, course, image) => {
     const courseRef = doc(db, "courses", `${course.id}`);
-    if (!!image) {
-      image = "/123.jpg";
-    }
     const data = {
       title: course.title,
       description: course.description,
-      category: course.category,
-      tag: course.tag,
+      tags: course.tags,
     };
     if (image) {
       data.image = image;
