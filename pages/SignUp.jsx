@@ -32,7 +32,10 @@ const Signup = () => {
       setLack("noEmail");
     } else {
       try {
-        const response = await axios.post("/api/registration", form);
+        const response = await axios.post(
+          `${process.env.API_URL}/api/registration`,
+          form
+        );
         setForm({
           email: "",
           password: "",

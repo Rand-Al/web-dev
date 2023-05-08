@@ -23,8 +23,10 @@ const Login = () => {
       setBlank("noEmail");
     } else {
       try {
-        await axios.post("/api/login", JSON.stringify(form), {
+        const response = await fetch("/api/login", {
+          method: "POST",
           headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
         });
         router.push("/");
       } catch (errors) {

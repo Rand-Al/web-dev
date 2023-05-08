@@ -179,15 +179,14 @@ export const getServerSideProps = withIronSessionSsr(async function ({
 }) {
   const user = req.session.user;
   const dbCourses = service.getCoursesWithCategories(firestoreDb);
-  const categories = service.getCategories(firestoreDb);
-  // if (user === undefined) {
-  //   return {
-  //     redirect: {
-  //       destination: "/login",
-  //       permanent: false,
-  //     },
-  //   };
-  // }
+  if (user === undefined) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
 
   return {
     props: {
