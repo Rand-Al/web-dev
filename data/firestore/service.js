@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 import {
   collection,
   getDocs,
@@ -54,9 +55,14 @@ const data = {
   },
   addUser: async (db, user) => {
     const usersRef = collection(db, "users");
+    const salt = "dove";
+    const hashPassword = crypto
+      .createHash("sha256")
+      .update(user.password + salt)
+      .digest("hex");
     const data = {
       email: user.email,
-      password: user.password,
+      password: hashPassword,
       firstName: user.firstName,
       lastName: user.lastName,
       age: user.age,

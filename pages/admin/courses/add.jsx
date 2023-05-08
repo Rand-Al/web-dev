@@ -31,6 +31,7 @@ const AddCourse = ({ categoriesList, user }) => {
   const [path, setPath] = useState("");
   const [fileName, setFileName] = useState("");
   const [emptyFieldError, setEmptyFieldError] = useState("");
+  const [textareaState, setTextareaState] = useState("");
   const addCategory = async (category, courseId) => {
     const resCategory = await axios.post("/api/courses", {
       category,
@@ -45,6 +46,7 @@ const AddCourse = ({ categoriesList, user }) => {
     );
     setCategories(filteredCategories);
   };
+  console.log(textareaState);
   const deleteCategory = async (categoryId, courseId, e) => {
     e.preventDefault();
     const res = await axios.post("/api/courses", {
@@ -108,7 +110,7 @@ const AddCourse = ({ categoriesList, user }) => {
   const goBack = () => {
     router.back();
   };
-
+  console.log(course.description);
   return (
     <Layout user={user}>
       <div className="container">
@@ -201,7 +203,6 @@ const AddCourse = ({ categoriesList, user }) => {
                   }`}
                   id="floatingArea"
                   placeholder="Description"
-                  value={course?.description}
                   onChange={(e) =>
                     setCourse(
                       (prev) => ({
@@ -216,7 +217,6 @@ const AddCourse = ({ categoriesList, user }) => {
               </div>
             </div>
           </div>
-
           <div className="form-floating d-flex mb-3 align-items-center gap-2">
             <div className="border flex-grow-1 p-2 d-flex gap-3 flex-wrap">
               <span className="fst-italic">

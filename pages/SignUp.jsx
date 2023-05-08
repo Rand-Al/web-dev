@@ -10,6 +10,7 @@ const Signup = () => {
   const [form, setForm] = useState({
     email: "",
     password: "",
+    passwordConfirmation: "",
     firstName: "",
     lastName: "",
     age: "",
@@ -20,10 +21,13 @@ const Signup = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!form.email && !form.password) {
       setLack("noEmailAndPassword");
     } else if (!form.password) {
       setLack("noPassword");
+    } else if (form.password !== form.passwordConfirmation) {
+      setLack("notEqualPasswords");
     } else if (!form.email) {
       setLack("noEmail");
     } else {
@@ -32,6 +36,7 @@ const Signup = () => {
         setForm({
           email: "",
           password: "",
+          passwordConfirmation: "",
           firstName: "",
           lastName: "",
           age: "",
@@ -90,13 +95,18 @@ const Signup = () => {
             <label htmlFor="floatingInput">Email address</label>
           </div>
           {(lack === "noPassword" || lack === "noEmailAndPassword") && (
-            <span className={s.errorText}>Password is required!</span>
+            <span className={s.errorText}>Passwords is required!</span>
+          )}
+          {lack === "notEqualPasswords" && (
+            <span className={s.errorText}>Passwords not equal!</span>
           )}
           <div className="form-floating mb-2">
             <input
               type="password"
               className={`form-control ${
-                (lack === "noPassword" || lack === "noEmailAndPassword") &&
+                (lack === "noPassword" ||
+                  lack === "noEmailAndPassword" ||
+                  lack === "notEqualPasswords") &&
                 `${s.formError}`
               }`}
               value={form.password}
@@ -112,6 +122,29 @@ const Signup = () => {
             />
 
             <label htmlFor="floatingPassword">Password</label>
+          </div>
+          <div className="form-floating mb-2">
+            <input
+              type="password"
+              className={`form-control ${
+                (lack === "noPassword" ||
+                  lack === "noEmailAndPassword" ||
+                  lack === "notEqualPasswords") &&
+                `${s.formError}`
+              }`}
+              value={form.passwordConfirmation}
+              id="floatingPasswordConfirmation"
+              placeholder="Password confirmation"
+              onChange={(e) =>
+                setForm(
+                  (prev) => ({ ...prev, passwordConfirmation: e.target.value }),
+                  setLack(""),
+                  setUniqueEmail("")
+                )
+              }
+            />
+
+            <label htmlFor="floatingPassword">Password confirmation</label>
           </div>
           <div className="form-floating mb-2">
             <input
