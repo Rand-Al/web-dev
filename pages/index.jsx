@@ -6,7 +6,6 @@ import { sessionOptions } from "../lib/session";
 import Layout from "./Layout";
 import axios from "axios";
 import s from "../styles/Home.module.css";
-import loading from "../public/images/spinner.svg";
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 
@@ -57,7 +56,12 @@ export default function Home({ user, dbCategories, dbCourses }) {
     <Layout user={user} title={"Home"}>
       {courses.length < 1 && chosenCategory === "Category" ? (
         <div className={`${s.loading}`}>
-          <Image src={loading} width="200" height={200} alt="" />
+          <Image
+            src="/images/tech/spinner.svg"
+            width="200"
+            height={200}
+            alt=""
+          />
         </div>
       ) : (
         <div className="container">
